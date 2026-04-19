@@ -194,6 +194,25 @@ export default async function Page() {
             ))}
             <div>
               <p className="font-semibold mb-2">{c(content, "footer_col3_title")}</p>
+              <div className="mt-4">
+  <button
+    onClick={() => {
+      if (navigator.share) {
+        navigator.share({
+          title: "PetlyAI",
+          text: "Sprawdź PetlyAI 🐾",
+          url: "https://petlyai.pl",
+        });
+      } else {
+        navigator.clipboard.writeText("https://petlyai.pl");
+        alert("Link skopiowany!");
+      }
+    }}
+    className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-2 rounded-full text-white text-sm hover:scale-105 transition"
+  >
+    Udostępnij 🚀
+  </button>
+</div>
               <a href={c(content, "header_cta_href") || "#"} className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">
                 {c(content, "hero_cta_primary")}
               </a>
