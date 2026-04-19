@@ -80,6 +80,18 @@ export default async function Page() {
       {/* HERO */}
       {isSectionVisible(sections, "hero") && (
         <section className="text-center mt-20 px-4 relative min-h-[550px] flex flex-col justify-start">
+          {/* ŁUKI — lewy + odbity prawy */}
+          <img
+            src={img(images, "arc", "arc.png")}
+            alt=""
+            className="pointer-events-none absolute left-[3%] bottom-[-31%] w-[700px] opacity-90 blur-sm z-0"
+          />
+          <img
+            src={img(images, "arc", "arc.png")}
+            alt=""
+            className="pointer-events-none absolute right-[3.5%] bottom-[-29%] w-[650px] opacity-120 blur-sm z-0 scale-x-[-1]"
+          />
+
           <img src={img(images, "phone_left", "phone-left.png")} alt="" className="absolute left-[5%] top-[-14%] w-[320px] md:w-[580px] rotate-[-8deg] z-20" />
           <img src={img(images, "phone_right", "phone-right.png")} alt="" className="absolute right-[7%] top-[-12%] w-[320px] md:w-[560px] rotate-[4deg] z-20" />
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
@@ -123,25 +135,47 @@ export default async function Page() {
 
       {/* CTA */}
       {isSectionVisible(sections, "cta") && (
-        <section className="mt-0 px-6 md:px-20 flex flex-col md:flex-row items-center justify-center gap-10">
-          <div className="max-w-xl text-center md:text-left">
+        <section className="relative mt-0 px-6 md:px-20 flex flex-col md:flex-row items-center justify-center gap-10 pb-0">
+          <div className="max-w-xl relative left-[-20px] top-[-100px] text-center md:text-left">
             <h2 className="text-4xl md:text-5xl font-bold leading-tight">
               {c(content, "cta_title_line1")}<br />
               {c(content, "cta_title_line2")}
             </h2>
             <p className="mt-5 text-lg opacity-80">{c(content, "cta_description")}</p>
-            <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-12 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">
+            <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-12 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full hover:scale-110 hover:shadow-[0_0_40px_rgba(236,72,153,0.7)] transition">
               {c(content, "cta_button")}
             </a>
           </div>
-          <img src={img(images, "phones_group", "phones-group.png")} alt="" className="relative z-10 w-[300px] md:w-[550px]" />
+          <div className="relative z-10 w-[420px] md:w-[600px] left-[90px] top-[-20px]">
+            <div className="absolute inset-0 bg-gradient-to-r from-pink-500/30 via-purple-500/30 to-blue-500/30 blur-3xl opacity-50" />
+            <img src={img(images, "phones_group", "phones-group.png")} alt="" className="relative z-10 w-[300px] md:w-[550px] scale-110 md:scale-125 hover:scale-130 transition" />
+          </div>
+
+          {/* ZWIERZAKI — pies lewa, kot prawa */}
+          <img
+            src={img(images, "dog_left", "dog-left.png")}
+            alt=""
+            className="pointer-events-none absolute left-[-60px] bottom-[90px] w-[300px] md:w-[440px] z-20"
+          />
+          <img
+            src={img(images, "cat", "cat.png")}
+            alt=""
+            className="pointer-events-none absolute right-[-20px] bottom-[100px] w-[300px] md:w-[400px] z-20"
+          />
         </section>
       )}
 
       {/* FOOTER */}
       {isSectionVisible(sections, "footer") && (
-        <footer className="mt-10 py-8 px-4 relative text-white">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+        <footer className="mt-[-180px] py-4 px-4 relative overflow-hidden text-white">
+          {/* TŁO STOPKI */}
+          <img
+            src={img(images, "footer_bg", "footer-bg.jpg")}
+            alt=""
+            className="absolute bottom-0 left-0 w-full h-full object-cover object-bottom opacity-90 -z-10 scale-110"
+          />
+
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 relative z-10">
             <div>
               <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
               <p className="text-sm opacity-70 max-w-xs">{c(content, "footer_description")}</p>
@@ -166,7 +200,7 @@ export default async function Page() {
               <p className="text-xs opacity-60 mt-2">{c(content, "footer_download_text")}</p>
             </div>
           </div>
-          <div className="text-center text-xs opacity-60 mt-10">{c(content, "footer_copyright")}</div>
+          <div className="text-center text-xs opacity-60 mt-10 relative z-10">{c(content, "footer_copyright")}</div>
         </footer>
       )}
     </main>
