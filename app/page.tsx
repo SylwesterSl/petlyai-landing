@@ -174,7 +174,6 @@ export default async function Page() {
             alt=""
             className="absolute bottom-0 left-0 w-full h-full object-cover object-bottom opacity-90 -z-10 scale-110"
           />
-
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 relative z-10">
             <div>
               <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
