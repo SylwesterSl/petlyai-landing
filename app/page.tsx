@@ -165,7 +165,7 @@ export default async function Page() {
         </section>
       )}
 
-    {/* FOOTER */}
+   {/* FOOTER */}
       {isSectionVisible(sections, "footer") && (
         <footer className="mt-[-180px] py-4 px-4 relative overflow-hidden text-white">
           {/* TŁO STOPKI */}
@@ -197,12 +197,6 @@ export default async function Page() {
               <a href={c(content, "header_cta_href") || "#"} className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">
                 {c(content, "hero_cta_primary")}
               </a>
-              <button
-  onClick={() => window.open("https://petlyai.pl", "_blank")}
-  className="mt-3 bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-2 rounded-full text-white text-sm"
->
-  Udostępnij 🚀
-</button>
               <p className="text-xs opacity-60 mt-2">{c(content, "footer_download_text")}</p>
             </div>
           </div>
