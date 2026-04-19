@@ -165,16 +165,10 @@ export default async function Page() {
         </section>
       )}
 
-      {/* FOOTER */}
+     {/* FOOTER */}
       {isSectionVisible(sections, "footer") && (
-        <footer className="mt-[-180px] py-4 px-4 relative overflow-hidden text-white">
-          {/* TŁO STOPKI */}
-          <img
-            src={img(images, "footer_bg", "footer-bg.jpg")}
-            alt=""
-            className="absolute bottom-0 left-0 w-full h-full object-cover object-bottom opacity-90 -z-10 scale-110"
-          />
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10 relative z-10">
+        <footer className="mt-10 py-8 px-4 relative text-white">
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
             <div>
               <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
               <p className="text-sm opacity-70 max-w-xs">{c(content, "footer_description")}</p>
@@ -193,15 +187,13 @@ export default async function Page() {
             ))}
             <div>
               <p className="font-semibold mb-2">{c(content, "footer_col3_title")}</p>
-              <div className="mt-4">
-  
               <a href={c(content, "header_cta_href") || "#"} className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">
                 {c(content, "hero_cta_primary")}
               </a>
               <p className="text-xs opacity-60 mt-2">{c(content, "footer_download_text")}</p>
             </div>
           </div>
-          <div className="text-center text-xs opacity-60 mt-10 relative z-10">{c(content, "footer_copyright")}</div>
+          <div className="text-center text-xs opacity-60 mt-10">{c(content, "footer_copyright")}</div>
         </footer>
       )}
     </main>
