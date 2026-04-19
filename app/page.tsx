@@ -188,31 +188,85 @@ export default function Page() {
 
       {/* HERO */}
       {isSectionVisible("hero") && (
-        <section className="text-center mt-20 px-4 relative min-h-[550px] flex flex-col justify-start">
-          <img src={img("arc", "arc.png")} alt="" className="pointer-events-none absolute left-[3%] bottom-[-31%] w-[700px] opacity-90 blur-sm z-0" />
-          <img src={img("arc", "arc.png")} alt="" className="pointer-events-none absolute right-[3.5%] bottom-[-29%] w-[650px] opacity-120 blur-sm z-0 scale-x-[-1]" />
-          <img src={img("phone_left", "phone-left.png")} alt="" className="absolute left-[5%] top-[-14%] w-[320px] md:w-[580px] rotate-[-8deg] z-20" />
-          <img src={img("phone_right", "phone-right.png")} alt="" className="absolute right-[7%] top-[-12%] w-[320px] md:w-[560px] rotate-[4deg] z-20" />
+        <>
+          {/* ===== MOBILE HERO (visible < md) ===== */}
+          <section className="md:hidden text-center mt-8 px-4 relative flex flex-col items-center">
+            {/* Top centered phone (right one) */}
+            <img
+              src={img("phone_right", "phone-right.png")}
+              alt=""
+              className="w-[220px] sm:w-[260px] mx-auto rotate-[4deg] drop-shadow-[0_10px_30px_rgba(236,72,153,0.35)]"
+            />
 
-          <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-            {c("hero_title_line1")}<br />
-            <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-              {c("hero_title_line2")}
-            </span><br />
-            {c("hero_title_line3")}
-          </h1>
+            {/* Title */}
+            <h1 className="mt-6 text-3xl sm:text-4xl font-bold leading-tight">
+              {c("hero_title_line1")}<br />
+              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+                {c("hero_title_line2")}
+              </span><br />
+              {c("hero_title_line3")}
+            </h1>
 
-          <p className="mt-4 opacity-70">{c("hero_subtitle")}</p>
+            {/* Subtitle */}
+            <p className="mt-3 text-sm opacity-70 max-w-sm">{c("hero_subtitle")}</p>
 
-          <div className="mt-6 flex justify-center gap-4 flex-wrap">
-            <a href={c("header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full hover:scale-105 transition">
-              {c("hero_cta_primary")}
-            </a>
-            <a href="#funkcje" className="border px-6 py-3 rounded-full hover:bg-white/10 transition">
-              {c("hero_cta_secondary")}
-            </a>
-          </div>
-        </section>
+            {/* CTAs */}
+            <div className="mt-5 flex justify-center gap-3 flex-wrap">
+              <a href={c("header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-2.5 rounded-full text-sm hover:scale-105 transition">
+                {c("hero_cta_primary")}
+              </a>
+              <a href="#funkcje" className="border px-5 py-2.5 rounded-full text-sm hover:bg-white/10 transition">
+                {c("hero_cta_secondary")}
+              </a>
+            </div>
+
+            {/* Bottom centered phone (left one) with small arcs around it */}
+            <div className="relative mt-8 w-full flex justify-center">
+              <img
+                src={img("arc", "arc.png")}
+                alt=""
+                className="pointer-events-none absolute left-[-10%] bottom-[-10%] w-[60%] opacity-70 blur-sm"
+              />
+              <img
+                src={img("arc", "arc.png")}
+                alt=""
+                className="pointer-events-none absolute right-[-10%] bottom-[-10%] w-[60%] opacity-70 blur-sm scale-x-[-1]"
+              />
+              <img
+                src={img("phone_left", "phone-left.png")}
+                alt=""
+                className="relative w-[220px] sm:w-[260px] rotate-[-8deg] drop-shadow-[0_10px_30px_rgba(168,85,247,0.35)] z-10"
+              />
+            </div>
+          </section>
+
+          {/* ===== DESKTOP HERO (visible >= md) — original layout untouched ===== */}
+          <section className="hidden md:flex text-center mt-20 px-4 relative min-h-[550px] flex-col justify-start">
+            <img src={img("arc", "arc.png")} alt="" className="pointer-events-none absolute left-[3%] bottom-[-31%] w-[700px] opacity-90 blur-sm z-0" />
+            <img src={img("arc", "arc.png")} alt="" className="pointer-events-none absolute right-[3.5%] bottom-[-29%] w-[650px] opacity-120 blur-sm z-0 scale-x-[-1]" />
+            <img src={img("phone_left", "phone-left.png")} alt="" className="absolute left-[5%] top-[-14%] w-[580px] rotate-[-8deg] z-20" />
+            <img src={img("phone_right", "phone-right.png")} alt="" className="absolute right-[7%] top-[-12%] w-[560px] rotate-[4deg] z-20" />
+
+            <h1 className="text-6xl font-bold leading-tight">
+              {c("hero_title_line1")}<br />
+              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
+                {c("hero_title_line2")}
+              </span><br />
+              {c("hero_title_line3")}
+            </h1>
+
+            <p className="mt-4 opacity-70">{c("hero_subtitle")}</p>
+
+            <div className="mt-6 flex justify-center gap-4 flex-wrap">
+              <a href={c("header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full hover:scale-105 transition">
+                {c("hero_cta_primary")}
+              </a>
+              <a href="#funkcje" className="border px-6 py-3 rounded-full hover:bg-white/10 transition">
+                {c("hero_cta_secondary")}
+              </a>
+            </div>
+          </section>
+        </>
       )}
 
       {/* JAK TO DZIAŁA */}
