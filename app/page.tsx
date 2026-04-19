@@ -204,11 +204,10 @@ export default async function Page() {
           url: "https://petlyai.pl",
         });
       } else {
-        navigator.clipboard.writeText("https://petlyai.pl");
-        alert("Link skopiowany!");
+        window.open("https://petlyai.pl", "_blank");
       }
     }}
-    className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-2 rounded-full text-white text-sm hover:scale-105 transition"
+    className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-2 rounded-full text-white text-sm"
   >
     Udostępnij 🚀
   </button>
