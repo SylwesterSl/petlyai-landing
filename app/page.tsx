@@ -165,37 +165,83 @@ export default async function Page() {
         </section>
       )}
 
-     {/* FOOTER */}
-      {isSectionVisible(sections, "footer") && (
-        <footer className="mt-10 py-8 px-4 relative text-white">
-          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
-            <div>
-              <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
-              <p className="text-sm opacity-70 max-w-xs">{c(content, "footer_description")}</p>
-            </div>
-            {[1, 2].map((col) => (
-              <div key={col}>
-                <p className="font-semibold mb-2">{c(content, `footer_col${col}_title`)}</p>
-                <div className="flex flex-col gap-2 text-sm opacity-70">
-                  {[1, 2, 3].map((i) => {
-                    const label = c(content, `footer_col${col}_link${i}_label`);
-                    const href = c(content, `footer_col${col}_link${i}_href`) || "#";
-                    return label ? <a key={i} href={href} className="hover:text-pink-400">{label}</a> : null;
-                  })}
-                </div>
-              </div>
-            ))}
-            <div>
-              <p className="font-semibold mb-2">{c(content, "footer_col3_title")}</p>
-              <a href={c(content, "header_cta_href") || "#"} className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">
-                {c(content, "hero_cta_primary")}
-              </a>
-              <p className="text-xs opacity-60 mt-2">{c(content, "footer_download_text")}</p>
-            </div>
+      {/* FOOTER */}
+{isSectionVisible(sections, "footer") && (
+  <footer className="mt-10 py-8 px-4 relative text-white">
+    <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+      
+      {/* LOGO */}
+      <div>
+        <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
+        <p className="text-sm opacity-70 max-w-xs">
+          {c(content, "footer_description")}
+        </p>
+      </div>
+
+      {/* LINKI */}
+      {[1, 2].map((col) => (
+        <div key={col}>
+          <p className="font-semibold mb-2">
+            {c(content, `footer_col${col}_title`)}
+          </p>
+          <div className="flex flex-col gap-2 text-sm opacity-70">
+            {[1, 2, 3].map((i) => {
+              const label = c(content, `footer_col${col}_link${i}_label`);
+              const href = c(content, `footer_col${col}_link${i}_href`) || "#";
+              return label ? (
+                <a key={i} href={href} className="hover:text-pink-400">
+                  {label}
+                </a>
+              ) : null;
+            })}
           </div>
-          <div className="text-center text-xs opacity-60 mt-10">{c(content, "footer_copyright")}</div>
-        </footer>
-      )}
-    </main>
-  );
-}
+        </div>
+      ))}
+
+      {/* CTA + SHARE */}
+      <div>
+        <p className="font-semibold mb-2">
+          {c(content, "footer_col3_title")}
+        </p>
+
+        {/* GŁÓWNY BUTTON */}
+        <a
+          href={c(content, "header_cta_href") || "#"}
+          className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full"
+        >
+          {c(content, "hero_cta_primary")}
+        </a>
+
+        {/* SHARE BUTTON */}
+        <div className="mt-4">
+          <button
+            onClick={() => {
+              if (navigator.share) {
+                navigator.share({
+                  title: "PetlyAI",
+                  text: "Sprawdź PetlyAI 🐾",
+                  url: "https://petlyai.pl",
+                });
+              } else {
+                window.open("https://petlyai.pl", "_blank");
+              }
+            }}
+            className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-2 rounded-full text-white text-sm hover:scale-105 transition"
+          >
+            Udostępnij 🚀
+          </button>
+        </div>
+
+        {/* TEKST */}
+        <p className="text-xs opacity-60 mt-2">
+          {c(content, "footer_download_text")}
+        </p>
+      </div>
+    </div>
+
+    {/* COPYRIGHT */}
+    <div className="text-center text-xs opacity-60 mt-10">
+      {c(content, "footer_copyright")}
+    </div>
+  </footer>
+)}
