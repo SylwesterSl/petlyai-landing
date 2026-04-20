@@ -90,11 +90,11 @@ export default async function Page() {
             <img
               src={img(images, "phone_right", "phone-right.png")}
               alt=""
-              className="w-[100%] max-w-[460px] rotate-[4deg] -mt-12 -mb-20 z-20"
+              className="w-[100%] max-w-[460px] rotate-[4deg] -mt-12 -mb-10 z-20"
             />
 
             {/* Tytuł - dosunięty bezpośrednio pod telefon */}
-            <h1 className="text-3xl font-bold leading-tight -mt-2">
+            <h1 className="text-3xl font-bold leading-tight mt-6">
               {c(content, "hero_title_line1")}<br />
               <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
                 {c(content, "hero_title_line2")}
@@ -117,7 +117,7 @@ export default async function Page() {
             <img
               src={img(images, "phone_left", "phone-left.png")}
               alt=""
-              className="w-[95%] max-w-[440px] rotate-[-8deg] -mt-2 z-20"
+              className="w-[95%] max-w-[440px] rotate-[-8deg] -mt-8 -mb-12 z-20"
             />
           </section>
 
@@ -149,7 +149,7 @@ export default async function Page() {
 
       {/* HOW IT WORKS */}
       {isSectionVisible(sections, "how_it_works") && (
-        <section className="mt-10 md:mt-16 text-center px-4 relative z-10">
+        <section className="mt-4 md:mt-16 text-center px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10">{c(content, "how_it_works_title")}</h2>
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {howItWorks.map(renderHowItWorksCard)}
