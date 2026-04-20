@@ -85,16 +85,16 @@ export default async function Page() {
       {isSectionVisible(sections, "hero") && (
         <>
           {/* MOBILE HERO */}
-          <section className="md:hidden text-center px-4 relative mt-2 flex flex-col items-center">
-            {/* Telefon (kobieta z kotem) - powiększony, wycentrowany na górze */}
+          <section className="md:hidden text-center px-4 relative -mt-10 flex flex-col items-center">
+            {/* Telefon (kobieta z kotem) - powiększony, wycentrowany, przyklejony do góry */}
             <img
               src={img(images, "phone_right", "phone-right.png")}
               alt=""
-              className="w-[95%] max-w-[440px] rotate-[4deg] -mt-2 -mb-4 z-20"
+              className="w-[100%] max-w-[460px] rotate-[4deg] -mt-12 -mb-20 z-20"
             />
 
-            {/* Tytuł */}
-            <h1 className="text-3xl font-bold leading-tight mt-2">
+            {/* Tytuł - dosunięty bezpośrednio pod telefon */}
+            <h1 className="text-3xl font-bold leading-tight -mt-2">
               {c(content, "hero_title_line1")}<br />
               <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
                 {c(content, "hero_title_line2")}
