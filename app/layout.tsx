@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import "./globals.css";
+import TrackerProvider from "../components/TrackerProvider";
 
 const SUPABASE_URL = "https://mslnptcmvciwyxwqjvmi.supabase.co";
 const SUPABASE_ANON_KEY =
@@ -70,7 +71,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pl">
-      <body>{children}</body>
+      <body>
+        <TrackerProvider />
+        {children}
+      </body>
     </html>
   );
 }
