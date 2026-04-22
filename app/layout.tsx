@@ -4,9 +4,9 @@ import type { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import "./globals.css";
 
-const SUPABASE_URL = "https://vncvpsobkgvpwcxzvsfr.supabase.co";
+const SUPABASE_URL = "https://mslnptcmvciwyxwqjvmi.supabase.co";
 const SUPABASE_ANON_KEY =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZuY3Zwc29ia2d2cHdjeHp2c2ZyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYzNDg5MTYsImV4cCI6MjA5MTkyNDkxNn0.5Ej8c7x_CNJJ4N_0QbbBSHEqDb4CHD3a1NzsXDpezvM";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1zbG5wdGNtdmNpd3l4d3Fqdm1pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxNzMzMTYsImV4cCI6MjA4OTc0OTMxNn0.8-6sGetqRaub5T-A0M5ttY5-ZKlNt2tCF1GKK85P_XY";
 
 // Stały, publiczny URL OG image — serwowany z naszej domeny (bez CDN/storage Lovable).
 // Plik musi istnieć w /public/images/og-image.jpg w projekcie landingu.
