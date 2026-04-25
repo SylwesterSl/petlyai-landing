@@ -1,57 +1,89 @@
-import { supabase } from "./supabase";
+import { createClient } from "@supabase/supabase-js";
 
-export type SiteContent = Record<string, string>;
-export type SiteImages = Record<string, string>;
+const URL_ = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-export interface SiteNavItem {
-  id: string; label: string; href: string; position: number; visible: boolean;
-}
-export interface SiteFeature {
-  id: string; section: string; title: string; description: string;
-  icon: string; gradient: string; icon_color: string;
-  link: string | null; position: number; visible: boolean;
-}
-export interface SiteSection {
-  id: string; key: string; label: string; visible: boolean; position: number;
-}
+export const cms = createClient(URL_, ANON, { auth: { persistSession: false } });
 
-export interface CmsData {
-  content: SiteContent;
-  images: SiteImages;
-  navigation: SiteNavItem[];
-  features: SiteFeature[];
-  sections: SiteSection[];
-}
-
-export async function getCmsData(): Promise<CmsData> {
-  const [contentRes, navRes, featRes, secRes, imgRes] = await Promise.all([
-    supabase.from("site_content").select("*"),
-    supabase.from("site_navigation").select("*").order("position"),
-    supabase.from("site_features").select("*").order("position"),
-    supabase.from("site_sections").select("*").order("position"),
-    supabase.from("site_images").select("*"),
-  ]);
-
-  const content: SiteContent = {};
-  contentRes.data?.forEach((r: any) => { content[r.key] = r.value; });
-
-  const images: SiteImages = {};
-  imgRes.data?.forEach((r: any) => { if (r.public_url) images[r.key] = r.public_url; });
-
-  return {
-    content,
-    images,
-    navigation: (navRes.data ?? []) as SiteNavItem[],
-    features: (featRes.data ?? []) as SiteFeature[],
-    sections: (secRes.data ?? []) as SiteSection[],
-  };
+export interface CmsPage {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  seo_title: string | null;
+  seo_description: string | null;
+  og_image: string | null;
+  is_published: boolean;
+  updated_at: string;
+  show_in_navbar?: boolean;
+  show_in_footer?: boolean;
+  nav_position?: number;
+  footer_position?: number;
+  footer_group?: string | null;
 }
 
-// Helpers (identyczne jak w panelu admina)
-export const c = (content: SiteContent, key: string) => content[key] ?? "";
-export const img = (images: SiteImages, key: string, fallbackFilename: string) =>
-  images[key] || `/images/${fallbackFilename}`;
-export const isSectionVisible = (sections: SiteSection[], key: string) => {
-  const s = sections.find((sec) => sec.key === key);
-  return s ? s.visible : true;
+export interface CmsPopup {
+  id: string;
+  title: string;
+  content: string;
+  image_url: string | null;
+  button_text: string | null;
+  button_link: string | null;
+  delay: number;
+  show_once: boolean;
+  page_slug: string | null;
+  position: number;
+}
+
+export interface CmsTile {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string | null;
+  link: string;
+  position: number;
+}
+
+export const getPage = async (slug: string): Promise<CmsPage | null> => {
+  const normalized = slug.startsWith("/") ? slug : `/${slug}`;
+  const { data } = await cms.from("site_pages").select("*").eq("slug", normalized).eq("is_published", true).maybeSingle();
+  return (data as CmsPage) ?? null;
+};
+
+export const listPages = async (): Promise<Pick<CmsPage, "slug">[]> => {
+  const { data } = await cms.from("site_pages").select("slug").eq("is_published", true);
+  return (data as Pick<CmsPage, "slug">[]) ?? [];
+};
+
+export const getActivePopups = async (pageSlug?: string): Promise<CmsPopup[]> => {
+  let q = cms.from("site_popups").select("*").eq("is_active", true).order("position");
+  if (pageSlug) q = q.or(`page_slug.is.null,page_slug.eq.${pageSlug}`);
+  const { data } = await q;
+  return (data as CmsPopup[]) ?? [];
+};
+
+export const getTiles = async (): Promise<CmsTile[]> => {
+  const { data } = await cms.from("site_tiles").select("*").eq("visible", true).order("position");
+  return (data as CmsTile[]) ?? [];
+};
+
+export interface NavItem { slug: string; title: string; nav_position: number }
+export interface FooterItem { slug: string; title: string; footer_group: string | null; footer_position: number }
+
+export const getNavbar = async (): Promise<NavItem[]> => {
+  const { data } = await cms.from("site_pages")
+    .select("slug, title, nav_position")
+    .eq("is_published", true)
+    .eq("show_in_navbar", true)
+    .order("nav_position", { ascending: true });
+  return (data as NavItem[]) ?? [];
+};
+
+export const getFooter = async (): Promise<FooterItem[]> => {
+  const { data } = await cms.from("site_pages")
+    .select("slug, title, footer_group, footer_position")
+    .eq("is_published", true)
+    .eq("show_in_footer", true)
+    .order("footer_position", { ascending: true });
+  return (data as FooterItem[]) ?? [];
 };
