@@ -1,14 +1,11 @@
-import { NextResponse } from "next/server";
-import { getPage } from "@/lib/cms";
-
-export const revalidate = 60;
-
 export async function GET(
   _req: Request,
-  { params }: { params: { slug: string } }
+  context: any
 ) {
   try {
-    const page = await getPage(params.slug);
+    const slug = context.params.slug;
+
+    const page = await getPage(slug);
 
     if (!page) {
       return NextResponse.json(
