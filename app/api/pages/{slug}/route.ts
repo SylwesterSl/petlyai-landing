@@ -1,3 +1,8 @@
+import { NextResponse } from "next/server";
+import { getPage } from "@/lib/cms";
+
+export const revalidate = 60;
+
 export async function GET(
   _req: Request,
   context: any
