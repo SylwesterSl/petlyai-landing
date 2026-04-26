@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "next/link"; 
 import { getFooter, type FooterItem } from "@/lib/cms";
 
 export const revalidate = 60;
