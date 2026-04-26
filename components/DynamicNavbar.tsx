@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "next/link"; 
 import { getNavbar } from "@/lib/cms";
 
 export const revalidate = 60;
