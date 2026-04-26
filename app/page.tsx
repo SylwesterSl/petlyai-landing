@@ -1,25 +1,59 @@
 import { PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain } from "lucide-react";
-import { getCmsData, c, img, isSectionVisible, type SiteFeature } from "@/lib/cms";
 import { ShareButton } from "@/components/ShareButton";
+import PopupManager from "@/components/PopupManager";
+import {
+  getContent, getImages, getFeatures, getSections,
+  getNavbar, getFooter, getLegacyNav, getTiles,
+  c, img, isSectionVisible, type SiteFeature,
+} from "@/lib/cms";
 
-// Rewaliduj co 60s — zmiany w CMS pojawią się automatycznie
 export const revalidate = 60;
 
-const iconMap: Record<string, any> = {
-  PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain,
+export const metadata = {
+  title: "PetlyAI — Twój pupil w jednej aplikacji",
+  description:
+    "PetlyAI to aplikacja dla miłośników zwierząt: profile pupili, AI dla zdrowia i zachowania, społeczność i ranking.",
+  alternates: { canonical: "https://petlyai.pl/" },
+  openGraph: {
+    title: "PetlyAI — Twój pupil w jednej aplikacji",
+    description: "Profile pupili, AI dla zdrowia i zachowania, społeczność i ranking.",
+    url: "https://petlyai.pl/",
+    images: ["https://petlyai.pl/images/og-image.jpg"],
+  },
 };
 
+const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain,
+};
 const renderIcon = (name: string, className: string) => {
   const Icon = iconMap[name] || PawPrint;
   return <Icon className={className} />;
 };
 
 export default async function Page() {
-  const { content, images, navigation, features, sections } = await getCmsData();
+  const [content, images, features, sections, navPages, footerPages, legacyNav, tiles] =
+    await Promise.all([
+      getContent(), getImages(), getFeatures(), getSections(),
+      getNavbar(), getFooter(), getLegacyNav(), getTiles(),
+    ]);
 
   const howItWorks = features.filter((f) => f.section === "how_it_works" && f.visible);
+  // Featured cards: prefer site_tiles (new CMS); fallback to site_features.
+  const tileCards = tiles.length > 0 ? tiles : null;
   const featureCards = features.filter((f) => f.section === "features" && f.visible);
-  const visibleNav = navigation.filter((n) => n.visible);
+
+  // Top navbar: prefer site_pages (new CMS); fallback to site_navigation.
+  const navItems = navPages.length > 0
+    ? navPages.map((n) => ({ id: n.slug, label: n.title, href: n.slug }))
+    : legacyNav.map((n) => ({ id: n.id, label: n.label, href: n.href }));
+
+  // Group footer links from site_pages by footer_group.
+  const footerGroups = footerPages.reduce<Record<string, { slug: string; title: string }[]>>((acc, p) => {
+    const g = p.footer_group ?? "Linki";
+    (acc[g] ??= []).push({ slug: p.slug, title: p.title });
+    return acc;
+  }, {});
+  const footerGroupNames = Object.keys(footerGroups);
 
   const shareLabel = c(content, "share_button_label") || "Udostępnij 🚀";
   const shareUrl = c(content, "share_button_url") || "https://petlyai.pl";
@@ -72,7 +106,7 @@ export default async function Page() {
           <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-24 md:w-36 h-auto object-contain" />
         </a>
         <nav className="hidden md:flex gap-8 text-sm opacity-80">
-          {visibleNav.map((n) => (
+          {navItems.map((n) => (
             <a key={n.id} href={n.href}>{n.label}</a>
           ))}
         </nav>
@@ -84,44 +118,21 @@ export default async function Page() {
       {/* HERO */}
       {isSectionVisible(sections, "hero") && (
         <>
-          {/* MOBILE HERO */}
           <section className="md:hidden text-center px-4 relative -mt-10 flex flex-col items-center">
-            {/* Telefon (kobieta z kotem) - powiększony, wycentrowany, przyklejony do góry */}
-            <img
-              src={img(images, "phone_right", "phone-right.png")}
-              alt=""
-              className="w-[100%] max-w-[460px] rotate-[4deg] -mt-12 -mb-10 z-20"
-            />
-
-            {/* Tytuł - dosunięty bezpośrednio pod telefon */}
+            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="w-[100%] max-w-[460px] rotate-[4deg] -mt-12 -mb-10 z-20" />
             <h1 className="text-3xl font-bold leading-tight mt-6">
               {c(content, "hero_title_line1")}<br />
-              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-                {c(content, "hero_title_line2")}
-              </span><br />
+              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">{c(content, "hero_title_line2")}</span><br />
               {c(content, "hero_title_line3")}
             </h1>
-
             <p className="mt-3 opacity-70 text-sm px-2">{c(content, "hero_subtitle")}</p>
-
             <div className="mt-4 flex justify-center gap-3 flex-wrap">
-              <a href={c(content, "header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full text-sm">
-                {c(content, "hero_cta_primary")}
-              </a>
-              <a href="#funkcje" className="border px-6 py-3 rounded-full text-sm">
-                {c(content, "hero_cta_secondary")}
-              </a>
+              <a href={c(content, "header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full text-sm">{c(content, "hero_cta_primary")}</a>
+              <a href="#funkcje" className="border px-6 py-3 rounded-full text-sm">{c(content, "hero_cta_secondary")}</a>
             </div>
-
-            {/* Drugi telefon (pies) - powiększony, wycentrowany pod CTA, blisko */}
-            <img
-              src={img(images, "phone_left", "phone-left.png")}
-              alt=""
-              className="w-[95%] max-w-[440px] rotate-[-8deg] -mt-8 -mb-12 z-20"
-            />
+            <img src={img(images, "phone_left", "phone-left.png")} alt="" className="w-[95%] max-w-[440px] rotate-[-8deg] -mt-8 -mb-12 z-20" />
           </section>
 
-          {/* DESKTOP HERO (oryginał) */}
           <section className="hidden md:flex text-center mt-20 px-4 relative min-h-[550px] flex-col justify-start">
             <img src={img(images, "arc", "arc.png")} alt="" className="pointer-events-none absolute left-[3%] bottom-[-31%] w-[700px] opacity-90 blur-sm z-0" />
             <img src={img(images, "arc", "arc.png")} alt="" className="pointer-events-none absolute right-[3.5%] bottom-[-29%] w-[650px] opacity-100 blur-sm z-0 scale-x-[-1]" />
@@ -129,19 +140,13 @@ export default async function Page() {
             <img src={img(images, "phone_right", "phone-right.png")} alt="" className="absolute right-[7%] top-[-12%] w-[560px] rotate-[4deg] z-20" />
             <h1 className="text-6xl font-bold leading-tight">
               {c(content, "hero_title_line1")}<br />
-              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">
-                {c(content, "hero_title_line2")}
-              </span><br />
+              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">{c(content, "hero_title_line2")}</span><br />
               {c(content, "hero_title_line3")}
             </h1>
             <p className="mt-4 opacity-70">{c(content, "hero_subtitle")}</p>
             <div className="mt-6 flex justify-center gap-4 flex-wrap">
-              <a href={c(content, "header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">
-                {c(content, "hero_cta_primary")}
-              </a>
-              <a href="#funkcje" className="border px-6 py-3 rounded-full">
-                {c(content, "hero_cta_secondary")}
-              </a>
+              <a href={c(content, "header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">{c(content, "hero_cta_primary")}</a>
+              <a href="#funkcje" className="border px-6 py-3 rounded-full">{c(content, "hero_cta_secondary")}</a>
             </div>
           </section>
         </>
@@ -157,20 +162,33 @@ export default async function Page() {
         </section>
       )}
 
-      {/* FEATURES */}
+      {/* FEATURES — CMS site_tiles (preferred) lub fallback site_features */}
       {isSectionVisible(sections, "features") && (
-        <section className="relative mt-12 md:mt-20 text-center px-4">
+        <section id="funkcje" className="relative mt-12 md:mt-20 text-center px-4">
           <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10">{c(content, "features_title")}</h2>
-          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-            {featureCards.map(renderFeatureCard)}
-          </div>
+          {tileCards ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {tileCards.map((t) => (
+                <a key={t.id} href={t.link} className="group block overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition hover:border-white/20 hover:bg-white/10 text-left">
+                  {t.image_url && <img src={t.image_url} alt={t.title} className="h-40 w-full object-cover transition group-hover:scale-105" />}
+                  <div className="p-4">
+                    <h3 className="mb-1 text-lg font-semibold">{t.title}</h3>
+                    {t.description && <p className="text-sm opacity-80">{t.description}</p>}
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
+              {featureCards.map(renderFeatureCard)}
+            </div>
+          )}
         </section>
       )}
 
       {/* CTA */}
       {isSectionVisible(sections, "cta") && (
         <>
-          {/* MOBILE CTA — kot → telefony → pies → tekst+CTA */}
           <section className="md:hidden -mt-8 px-4 flex flex-col items-center text-center">
             <img src={img(images, "cat", "cat.png")} alt="" className="w-[70%] max-w-[340px] -mb-16 z-20" />
             <img src={img(images, "phones_group", "phones-group.png")} alt="" className="w-[95%] max-w-[440px] -mt-12 -mb-20 z-10" />
@@ -181,13 +199,10 @@ export default async function Page() {
                 {c(content, "cta_title_line2")}
               </h2>
               <p className="mt-4 text-base opacity-80">{c(content, "cta_description")}</p>
-              <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-6 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">
-                {c(content, "cta_button")}
-              </a>
+              <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-6 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">{c(content, "cta_button")}</a>
             </div>
           </section>
 
-          {/* DESKTOP CTA (oryginał) */}
           <section className="hidden md:flex mt-0 px-20 flex-row items-center justify-center gap-10">
             <div className="max-w-xl text-left">
               <h2 className="text-5xl font-bold leading-tight">
@@ -195,28 +210,35 @@ export default async function Page() {
                 {c(content, "cta_title_line2")}
               </h2>
               <p className="mt-5 text-lg opacity-80">{c(content, "cta_description")}</p>
-              <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-12 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">
-                {c(content, "cta_button")}
-              </a>
+              <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-12 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">{c(content, "cta_button")}</a>
             </div>
             <img src={img(images, "phones_group", "phones-group.png")} alt="" className="relative z-10 w-[550px]" />
           </section>
         </>
       )}
 
-      {/* FOOTER */}
+      {/* FOOTER — linki z site_pages (footer_group) */}
       {isSectionVisible(sections, "footer") && (
         <footer className="mt-10 py-8 px-4 relative text-white">
-          {/* Logo + opis (pełna szerokość na mobile, kolumna na desktop) */}
           <div className="max-w-6xl mx-auto md:grid md:grid-cols-4 md:gap-10">
             <div className="mb-6 md:mb-0">
               <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
               <p className="text-sm opacity-70 max-w-xs">{c(content, "footer_description")}</p>
             </div>
 
-            {/* MOBILE: Produkt | Firma w 2 kolumnach obok siebie */}
-            <div className="grid grid-cols-2 gap-6 md:hidden mb-6">
-              {[1, 2].map((col) => (
+            {footerGroupNames.length > 0 ? (
+              footerGroupNames.slice(0, 2).map((group) => (
+                <div key={group}>
+                  <p className="font-semibold mb-2">{group}</p>
+                  <div className="flex flex-col gap-2 text-sm opacity-70">
+                    {footerGroups[group].map((l) => (
+                      <a key={l.slug} href={l.slug} className="hover:text-pink-400">{l.title}</a>
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              [1, 2].map((col) => (
                 <div key={col}>
                   <p className="font-semibold mb-2">{c(content, `footer_col${col}_title`)}</p>
                   <div className="flex flex-col gap-2 text-sm opacity-70">
@@ -227,53 +249,22 @@ export default async function Page() {
                     })}
                   </div>
                 </div>
-              ))}
-            </div>
+              ))
+            )}
 
-            {/* DESKTOP: Produkt + Firma jako osobne kolumny */}
-            {[1, 2].map((col) => (
-              <div key={col} className="hidden md:block">
-                <p className="font-semibold mb-2">{c(content, `footer_col${col}_title`)}</p>
-                <div className="flex flex-col gap-2 text-sm opacity-70">
-                  {[1, 2, 3].map((i) => {
-                    const label = c(content, `footer_col${col}_link${i}_label`);
-                    const href = c(content, `footer_col${col}_link${i}_href`) || "#";
-                    return label ? <a key={i} href={href} className="hover:text-pink-400">{label}</a> : null;
-                  })}
-                </div>
-              </div>
-            ))}
-
-            {/* MOBILE: Pobierz + Udostępnij w 2 kolumnach */}
-            <div className="grid grid-cols-2 gap-3 md:hidden">
-              <div>
-                <p className="font-semibold mb-2">{c(content, "footer_col3_title")}</p>
-                <a href={c(content, "header_cta_href") || "#"} className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-4 py-2 rounded-full text-sm whitespace-nowrap">
-                  {c(content, "hero_cta_primary")}
-                </a>
-                <p className="text-xs opacity-60 mt-2">{c(content, "footer_download_text")}</p>
-              </div>
-              <div>
-                <p className="font-semibold mb-2">&nbsp;</p>
-                <ShareButton label={shareLabel} url={shareUrl} />
-              </div>
-            </div>
-
-            {/* DESKTOP: Pobierz + Udostępnij w jednej kolumnie */}
-            <div className="hidden md:block">
-              <p className="font-semibold mb-2">{c(content, "footer_col3_title")}</p>
-              <a href={c(content, "header_cta_href") || "#"} className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">
-                {c(content, "hero_cta_primary")}
-              </a>
+            <div>
+              <p className="font-semibold mb-2">{c(content, "footer_col3_title") || "Pobierz"}</p>
+              <a href={c(content, "header_cta_href") || "#"} className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">{c(content, "hero_cta_primary")}</a>
               <p className="text-xs opacity-60 mt-2">{c(content, "footer_download_text")}</p>
-              <div className="mt-3">
-                <ShareButton label={shareLabel} url={shareUrl} />
-              </div>
+              <div className="mt-3"><ShareButton label={shareLabel} url={shareUrl} /></div>
             </div>
           </div>
           <div className="text-center text-xs opacity-60 mt-10">{c(content, "footer_copyright")}</div>
         </footer>
       )}
+
+      {/* CMS POPUPS */}
+      <PopupManager pageSlug="/" />
     </main>
   );
 }
