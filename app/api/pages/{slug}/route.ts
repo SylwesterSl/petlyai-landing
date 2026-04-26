@@ -1,23 +1,27 @@
-import { NextResponse } from 'next/server'
-import { getPage } from '@/lib/cms'
+import { NextResponse } from "next/server";
+import { getPage } from "@/lib/cms";
 
-export const dynamic = 'force-dynamic'
+export const revalidate = 60;
 
 export async function GET(
   _req: Request,
-  context: any
+  { params }: { params: { slug: string } }
 ) {
-  const slug = context?.params?.slug
+  try {
+    const page = await getPage(params.slug);
 
-  if (!slug) {
-    return NextResponse.json({ error: 'Missing slug' }, { status: 400 })
+    if (!page) {
+      return NextResponse.json(
+        { error: "Not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json(page);
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Server error" },
+      { status: 500 }
+    );
   }
-
-  const page = await getPage(slug)
-
-  if (!page) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 })
-  }
-
-  return NextResponse.json(page)
 }
