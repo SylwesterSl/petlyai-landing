@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import { getPage } from "@/lib/cms";
 
-export async function GET(req: Request) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { slug: string } }
+) {
   try {
-    const url = new URL(req.url);
-    const parts = url.pathname.split("/");
-
-    const slug = parts[parts.length - 1];
+    const slug = params.slug;
 
     if (!slug) {
       return NextResponse.json(
@@ -17,11 +17,18 @@ export async function GET(req: Request) {
 
     const page = await getPage(slug);
 
-    return NextResponse.json(page);
+    if (!page) {
+      return NextResponse.json(
+        { error: "Not found" },
+        { status: 404 }
+      );
+    }
 
+    return NextResponse.json(page);
   } catch (err: any) {
+    console.error("API ERROR:", err);
     return NextResponse.json(
-      { error: err.message },
+      { error: "Server error" },
       { status: 500 }
     );
   }
