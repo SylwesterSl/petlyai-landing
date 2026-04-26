@@ -1,8 +1,9 @@
+
 import { NextResponse } from "next/server";
 import { getPage } from "@/lib/cms";
 
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: { slug: string } }
 ) {
   try {
@@ -25,8 +26,9 @@ export async function GET(
     }
 
     return NextResponse.json(page);
-  } catch (err: any) {
+  } catch (err) {
     console.error("API ERROR:", err);
+
     return NextResponse.json(
       { error: "Server error" },
       { status: 500 }
