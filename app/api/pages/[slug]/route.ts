@@ -3,10 +3,10 @@ import { getPage } from "@/lib/cms";
 
 export async function GET(
   req: Request,
-  context: any
+  { params }: any
 ) {
   try {
-    const slug = context.params?.slug;
+    const slug = params.slug;
 
     if (!slug) {
       return NextResponse.json(
