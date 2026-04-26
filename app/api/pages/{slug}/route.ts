@@ -13,7 +13,7 @@ export async function GET(
     return NextResponse.json({ error: 'Missing slug' }, { status: 400 })
   }
 
-  const page = await getPage('/' + slug)
+  const page = await getPage(slug)
 
   if (!page) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 })
