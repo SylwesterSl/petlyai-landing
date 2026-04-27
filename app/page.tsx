@@ -119,7 +119,7 @@ export default async function Page() {
       {isSectionVisible(sections, "hero") && (
         <>
           <section className="md:hidden text-center px-4 relative -mt-10 flex flex-col items-center">
-            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="w-[100%] max-w-[460px] rotate-[4deg] -mt-12 -mb-10 z-20" />
+            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="w-[100%] max-w-[460px] rotate-[4deg] mt-4 -mb-10 z-20" />
             <h1 className="text-3xl font-bold leading-tight mt-6">
               {c(content, "hero_title_line1")}<br />
               <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">{c(content, "hero_title_line2")}</span><br />
@@ -219,8 +219,17 @@ export default async function Page() {
 
       {/* FOOTER — linki z site_pages (footer_group) */}
       {isSectionVisible(sections, "footer") && (
-        <footer className="mt-10 py-8 px-4 relative text-white">
-          <div className="max-w-6xl mx-auto md:grid md:grid-cols-4 md:gap-10">
+        <footer className="mt-10 pt-16 pb-8 px-4 relative text-white overflow-hidden">
+          {/* Tło footera — obraz z odcięciem (gwiazdy + łuk) */}
+          <img
+            src={img(images, "footer_bg", "footer-bg.jpg")}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover -z-10"
+          />
+          {/* Delikatne przyciemnienie dla czytelności tekstu */}
+          <div className="absolute inset-0 bg-black/40 -z-10" />
+          <div className="relative max-w-6xl mx-auto md:grid md:grid-cols-4 md:gap-10">
             <div className="mb-6 md:mb-0">
               <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
               <p className="text-sm opacity-70 max-w-xs">{c(content, "footer_description")}</p>
