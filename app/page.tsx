@@ -137,8 +137,8 @@ export default async function Page() {
               powiększamy telefony i mocniej rozsuwamy je na boki, żeby napis miał miejsce. */}
           <style>{`
             @media (pointer: coarse) and (max-width: 1600px) {
-              .hero-phone-left  { width: 520px !important; margin-right: 20px !important; }
-              .hero-phone-right { width: 500px !important; margin-left: 20px !important; }
+              .hero-phone-left  { width: 520px !important; margin-right: 0px !important; }
+              .hero-phone-right { width: 500px !important; margin-left: 0px !important; }
               .hero-text { padding-left: 1rem; padding-right: 1rem; }
             }
           `}</style>
