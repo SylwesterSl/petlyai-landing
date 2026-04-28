@@ -252,8 +252,8 @@ export default async function Page() {
               <p className="mt-5 text-lg opacity-80">{c(content, "cta_description")}</p>
               <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-12 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">{c(content, "cta_button")}</a>
             </div>
-            <img src={img(images, "phones_group", "phones-group.png")} alt="" className="relative z-10 w-[550px]" />
-            <img src={img(images, "cat", "cat.png")} alt="" className="pointer-events-none absolute right-0 bottom-[-90px] z-30 w-[260px] lg:w-[320px] xl:w-[380px]" />
+            <img src={img(images, "phones_group", "phones-group.png")} alt="" className="relative z-10 w-[600px]" />
+            <img src={img(images, "cat", "cat.png")} alt="" className="pointer-events-none absolute right-0 bottom-[-95px] z-30 w-[260px] lg:w-[320px] xl:w-[380px]" />
           </section>
         </>
       )}
