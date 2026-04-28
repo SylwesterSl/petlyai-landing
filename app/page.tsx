@@ -152,7 +152,7 @@ export default async function Page() {
           <style>{`
             @media (pointer: coarse) and (max-width: 1600px) {
               .hero-phone-left  { width: 480px !important; margin-right: -50px !important; }
-              .hero-phone-right { width: 480px !important; margin-left: -50px !important; }
+              .hero-phone-right { width: 470px !important; margin-left: -55px !important; }
               .hero-text { padding-left: 1rem; padding-right: 1rem; }
             }
             /* Łuki (arc) widoczne tylko na prawdziwym desktopie - ukryte na telefonach w widoku komputerowym */
