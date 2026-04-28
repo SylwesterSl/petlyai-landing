@@ -163,7 +163,7 @@ export default async function Page() {
           <section className="hidden md:flex relative items-center justify-center gap-0 px-6 mt-10">
             <img src={img(images, "arc_left", "arc.png")} alt="" aria-hidden="true" className="hero-arc pointer-events-none select-none absolute left-[4%] bottom-[-40px] w-[480px] z-10 opacity-90" />
             <img src={img(images, "arc_right", "arc.png")} alt="" aria-hidden="true" className="hero-arc pointer-events-none select-none absolute right-[4%] bottom-[-40px] w-[480px] z-10 opacity-90" />
-            <img src={img(images, "phone_left", "phone-left.png")} alt="" className="hero-phone-left relative w-[140px] rotate-[-8deg] z-20 -mr-12" />
+            <img src={img(images, "phone_left", "phone-left.png")} alt="" className="hero-phone-left relative w-[500px] rotate-[-8deg] z-20 -mr-12" />
             <div className="hero-text relative z-30 text-center px-2">
               <h1 className="text-5xl xl:text-6xl font-bold leading-tight">
                 {c(content, "hero_title_line1")}<br />
@@ -176,7 +176,7 @@ export default async function Page() {
                 <a href="#funkcje" className="border px-6 py-3 rounded-full">{c(content, "hero_cta_secondary")}</a>
               </div>
             </div>
-            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="hero-phone-right relative w-[420px] rotate-[4deg] z-20 -ml-12" />
+            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="hero-phone-right relative w-[480px] rotate-[4deg] z-20 -ml-12" />
           </section>
         </>
       )}
