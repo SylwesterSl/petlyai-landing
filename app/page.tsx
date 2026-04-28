@@ -151,8 +151,8 @@ export default async function Page() {
               powiększamy telefony i mocniej rozsuwamy je na boki, żeby napis miał miejsce. */}
           <style>{`
             @media (pointer: coarse) and (max-width: 1600px) {
-              .hero-phone-left  { width: 420px !important; margin-right: -50px !important; }
-              .hero-phone-right { width: 500px !important; margin-left: -50px !important; }
+              .hero-phone-left  { width: 500px !important; margin-right: -50px !important; }
+              .hero-phone-right { width: 480px !important; margin-left: -50px !important; }
               .hero-text { padding-left: 1rem; padding-right: 1rem; }
             }
             /* Łuki (arc) widoczne tylko na prawdziwym desktopie - ukryte na telefonach w widoku komputerowym */
