@@ -133,21 +133,30 @@ export default async function Page() {
             <img src={img(images, "phone_left", "phone-left.png")} alt="" className="w-[95%] max-w-[440px] rotate-[-8deg] -mt-8 -mb-12 z-20" />
           </section>
 
-          <section className="hidden md:flex text-center mt-20 px-4 relative min-h-[550px] flex-col justify-start">
-            <img src={img(images, "arc", "arc.png")} alt="" className="pointer-events-none absolute left-[3%] bottom-[-31%] w-[700px] opacity-90 blur-sm z-0" />
-            <img src={img(images, "arc", "arc.png")} alt="" className="pointer-events-none absolute right-[3.5%] bottom-[-29%] w-[650px] opacity-100 blur-sm z-0 scale-x-[-1]" />
-            <img src={img(images, "phone_left", "phone-left.png")} alt="" className="absolute left-[5%] top-[-14%] w-[580px] rotate-[-8deg] z-20" />
-            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="absolute right-[7%] top-[-12%] w-[560px] rotate-[4deg] z-20" />
-            <h1 className="text-6xl font-bold leading-tight">
-              {c(content, "hero_title_line1")}<br />
-              <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">{c(content, "hero_title_line2")}</span><br />
-              {c(content, "hero_title_line3")}
-            </h1>
-            <p className="mt-4 opacity-70">{c(content, "hero_subtitle")}</p>
-            <div className="mt-6 flex justify-center gap-4 flex-wrap">
-              <a href={c(content, "header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">{c(content, "hero_cta_primary")}</a>
-              <a href="#funkcje" className="border px-6 py-3 rounded-full">{c(content, "hero_cta_secondary")}</a>
+          {/* Skalowanie hero dla telefonów w trybie "podgląd komputerowy" (coarse pointer + wąski ekran fizyczny) */}
+          <style>{`
+            @media (pointer: coarse) and (max-width: 1280px) {
+              .hero-desktop-scale { transform: scale(0.55); transform-origin: top center; margin-bottom: -260px; }
+            }
+            @media (pointer: coarse) and (min-width: 1281px) and (max-width: 1600px) {
+              .hero-desktop-scale { transform: scale(0.7); transform-origin: top center; margin-bottom: -180px; }
+            }
+          `}</style>
+          <section className="hidden md:flex relative items-center justify-center gap-0 px-6 mt-10 hero-desktop-scale">
+            <img src={img(images, "phone_left", "phone-left.png")} alt="" className="relative w-[440px] rotate-[-8deg] z-20 -mr-12" />
+            <div className="relative z-30 text-center px-2">
+              <h1 className="text-5xl xl:text-6xl font-bold leading-tight">
+                {c(content, "hero_title_line1")}<br />
+                <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">{c(content, "hero_title_line2")}</span><br />
+                {c(content, "hero_title_line3")}
+              </h1>
+              <p className="mt-4 opacity-70">{c(content, "hero_subtitle")}</p>
+              <div className="mt-6 flex justify-center gap-4 flex-wrap">
+                <a href={c(content, "header_cta_href") || "#"} className="bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full">{c(content, "hero_cta_primary")}</a>
+                <a href="#funkcje" className="border px-6 py-3 rounded-full">{c(content, "hero_cta_secondary")}</a>
+              </div>
             </div>
+            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="relative w-[420px] rotate-[4deg] z-20 -ml-12" />
           </section>
         </>
       )}
@@ -204,7 +213,7 @@ export default async function Page() {
           </section>
 
           <section className="hidden md:flex relative overflow-visible mt-0 px-20 pb-24 -mb-16 flex-row items-center justify-center gap-10">
-            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="pointer-events-none absolute left-0 bottom-[-96px] z-30 w-[300px] lg:w-[360px] xl:w-[420px]" />
+            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="pointer-events-none absolute left-0 bottom-[-72px] z-30 w-[300px] lg:w-[360px] xl:w-[420px]" />
             <div className="max-w-xl text-left">
               <h2 className="text-5xl font-bold leading-tight">
                 {c(content, "cta_title_line1")}<br />
@@ -214,7 +223,7 @@ export default async function Page() {
               <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-12 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">{c(content, "cta_button")}</a>
             </div>
             <img src={img(images, "phones_group", "phones-group.png")} alt="" className="relative z-10 w-[550px]" />
-            <img src={img(images, "cat", "cat.png")} alt="" className="pointer-events-none absolute right-0 bottom-[-86px] z-30 w-[260px] lg:w-[320px] xl:w-[380px]" />
+            <img src={img(images, "cat", "cat.png")} alt="" className="pointer-events-none absolute right-0 bottom-[-64px] z-30 w-[260px] lg:w-[320px] xl:w-[380px]" />
           </section>
         </>
       )}
