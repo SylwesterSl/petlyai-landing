@@ -243,7 +243,7 @@ export default async function Page() {
           </section>
 
           <section className="hidden md:flex relative overflow-visible mt-0 px-20 pb-24 -mb-16 flex-row items-center justify-center gap-10">
-            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="pointer-events-none absolute left-0 bottom-[-82px] z-30 w-[300px] lg:w-[360px] xl:w-[420px]" />
+            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="pointer-events-none absolute left-0 bottom-[-92px] z-30 w-[300px] lg:w-[360px] xl:w-[420px]" />
             <div className="max-w-xl text-left">
               <h2 className="text-5xl font-bold leading-tight">
                 {c(content, "cta_title_line1")}<br />
@@ -253,7 +253,7 @@ export default async function Page() {
               <a href={c(content, "header_cta_href") || "#"} className="inline-block mt-12 bg-gradient-to-r from-pink-500 to-purple-500 px-8 py-4 rounded-full">{c(content, "cta_button")}</a>
             </div>
             <img src={img(images, "phones_group", "phones-group.png")} alt="" className="relative z-10 w-[550px]" />
-            <img src={img(images, "cat", "cat.png")} alt="" className="pointer-events-none absolute right-0 bottom-[-64px] z-30 w-[260px] lg:w-[320px] xl:w-[380px]" />
+            <img src={img(images, "cat", "cat.png")} alt="" className="pointer-events-none absolute right-0 bottom-[-84px] z-30 w-[260px] lg:w-[320px] xl:w-[380px]" />
           </section>
         </>
       )}
