@@ -243,7 +243,7 @@ export default async function Page() {
           </section>
 
           <section className="hidden md:flex relative overflow-visible mt-0 px-20 pb-24 -mb-16 flex-row items-center justify-center gap-10">
-            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="pointer-events-none absolute left-0 bottom-[-72px] z-30 w-[300px] lg:w-[360px] xl:w-[420px]" />
+            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="pointer-events-none absolute left-0 bottom-[-82px] z-30 w-[300px] lg:w-[360px] xl:w-[420px]" />
             <div className="max-w-xl text-left">
               <h2 className="text-5xl font-bold leading-tight">
                 {c(content, "cta_title_line1")}<br />
