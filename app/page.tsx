@@ -231,7 +231,7 @@ export default async function Page() {
           <section className="md:hidden -mt-8 px-4 flex flex-col items-center text-center">
             <img src={img(images, "cat", "cat.png")} alt="" className="w-[70%] max-w-[340px] -mb-16 z-20" />
             <img src={img(images, "phones_group", "phones-group.png")} alt="" className="w-[95%] max-w-[440px] -mt-12 -mb-20 z-10" />
-            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="w-[60%] max-w-[300px] -mt-16 -mb-12 z-20" />
+            <img src={img(images, "dog_left", "dog-left.png")} alt="" className="w-[70%] max-w-[340px] -mt-16 -mb-12 z-20" />
             <div className="max-w-xl -mt-4">
               <h2 className="text-3xl font-bold leading-tight">
                 {c(content, "cta_title_line1")}<br />
