@@ -1,4 +1,4 @@
-import { PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain } from "lucide-react";
+import { PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain, Sparkles, Users, Star, Bell, MessageCircle, Image as ImageIcon } from "lucide-react";
 import { ShareButton } from "@/components/ShareButton";
 import PopupManager from "@/components/PopupManager";
 import {
@@ -24,11 +24,25 @@ export const metadata = {
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain,
+  Sparkles, Users, Star, Bell, MessageCircle, Image: ImageIcon,
 };
 const renderIcon = (name: string, className: string) => {
   const Icon = iconMap[name] || PawPrint;
   return <Icon className={className} />;
 };
+
+// Paleta gradientów + ikon do auto-stylowania kafelków CMS (gdy nie mają własnych)
+const tilePalette: { gradient: string; iconBg: string; iconColor: string; icon: string }[] = [
+  { gradient: "from-pink-500/30 to-purple-500/30",   iconBg: "from-pink-500 to-purple-500",     iconColor: "text-white", icon: "PawPrint" },
+  { gradient: "from-orange-500/30 to-pink-500/30",   iconBg: "from-orange-500 to-pink-500",     iconColor: "text-white", icon: "Camera" },
+  { gradient: "from-blue-500/30 to-cyan-500/30",     iconBg: "from-blue-500 to-cyan-500",       iconColor: "text-white", icon: "ThumbsUp" },
+  { gradient: "from-yellow-500/30 to-orange-500/30", iconBg: "from-yellow-500 to-orange-500",   iconColor: "text-white", icon: "Trophy" },
+  { gradient: "from-purple-500/30 to-indigo-500/30", iconBg: "from-purple-500 to-indigo-500",   iconColor: "text-white", icon: "Brain" },
+  { gradient: "from-pink-500/30 to-rose-500/30",     iconBg: "from-pink-500 to-rose-500",       iconColor: "text-white", icon: "Heart" },
+  { gradient: "from-emerald-500/30 to-teal-500/30",  iconBg: "from-emerald-500 to-teal-500",    iconColor: "text-white", icon: "Sparkles" },
+  { gradient: "from-violet-500/30 to-fuchsia-500/30",iconBg: "from-violet-500 to-fuchsia-500",  iconColor: "text-white", icon: "Star" },
+  { gradient: "from-sky-500/30 to-blue-500/30",      iconBg: "from-sky-500 to-blue-500",        iconColor: "text-white", icon: "Users" },
+];
 
 export default async function Page() {
   const [content, images, features, sections, navPages, footerPages, legacyNav, tiles] =
@@ -137,12 +151,18 @@ export default async function Page() {
               powiększamy telefony i mocniej rozsuwamy je na boki, żeby napis miał miejsce. */}
           <style>{`
             @media (pointer: coarse) and (max-width: 1600px) {
-              .hero-phone-left  { width: 520px !important; margin-right: -40px !important; }
-              .hero-phone-right { width: 500px !important; margin-left: -40px !important; }
+              .hero-phone-left  { width: 520px !important; margin-right: 40px !important; }
+              .hero-phone-right { width: 500px !important; margin-left: 40px !important; }
               .hero-text { padding-left: 1rem; padding-right: 1rem; }
+            }
+            /* Łuki (arc) widoczne tylko na prawdziwym desktopie - ukryte na telefonach w widoku komputerowym */
+            @media (pointer: coarse) {
+              .hero-arc { display: none !important; }
             }
           `}</style>
           <section className="hidden md:flex relative items-center justify-center gap-0 px-6 mt-10">
+            <img src={img(images, "arc_left", "arc.png")} alt="" aria-hidden="true" className="hero-arc pointer-events-none select-none absolute left-[4%] bottom-[-40px] w-[480px] z-10 opacity-90" />
+            <img src={img(images, "arc_right", "arc.png")} alt="" aria-hidden="true" className="hero-arc pointer-events-none select-none absolute right-[4%] bottom-[-40px] w-[480px] z-10 opacity-90" />
             <img src={img(images, "phone_left", "phone-left.png")} alt="" className="hero-phone-left relative w-[440px] rotate-[-8deg] z-20 -mr-12" />
             <div className="hero-text relative z-30 text-center px-2">
               <h1 className="text-5xl xl:text-6xl font-bold leading-tight">
@@ -177,15 +197,25 @@ export default async function Page() {
           <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10">{c(content, "features_title")}</h2>
           {tileCards ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-              {tileCards.map((t) => (
-                <a key={t.id} href={t.link} className="group block overflow-hidden rounded-2xl border border-white/10 bg-white/5 transition hover:border-white/20 hover:bg-white/10 text-left">
-                  {t.image_url && <img src={t.image_url} alt={t.title} className="h-40 w-full object-cover transition group-hover:scale-105" />}
-                  <div className="p-4">
-                    <h3 className="mb-1 text-lg font-semibold">{t.title}</h3>
-                    {t.description && <p className="text-sm opacity-80">{t.description}</p>}
-                  </div>
-                </a>
-              ))}
+              {tileCards.map((t, idx) => {
+                const p = tilePalette[idx % tilePalette.length];
+                return (
+                  <a key={t.id} href={t.link} className="group block text-left">
+                    <div className={`relative p-[1.5px] rounded-2xl bg-gradient-to-r ${p.gradient} hover:scale-[1.03] transition duration-300`}>
+                      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${p.gradient} opacity-50 blur-xl group-hover:opacity-80 transition`} />
+                      <div className="relative z-10 p-5 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-start gap-4 min-h-[112px]">
+                        <div className={`shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${p.iconBg} flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)]`}>
+                          {renderIcon(p.icon, `w-6 h-6 ${p.iconColor}`)}
+                        </div>
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-lg leading-tight">{t.title}</h3>
+                          {t.description && <p className="text-sm opacity-80 mt-1">{t.description}</p>}
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
             </div>
           ) : (
             <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
