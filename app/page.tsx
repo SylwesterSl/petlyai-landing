@@ -161,7 +161,7 @@ export default async function Page() {
             }
           `}</style>
           <section className="hidden md:flex relative items-center justify-center gap-0 px-6 mt-10">
-            <img src={img(images, "arc_left", "arc.png")} alt="" aria-hidden="true" className="hero-arc pointer-events-none select-none absolute left-[13%] bottom-[70px] w-[520px] z-10 opacity-90" />
+            <img src={img(images, "arc_left", "arc.png")} alt="" aria-hidden="true" className="hero-arc pointer-events-none select-none absolute left-[14%] bottom-[75px] w-[520px] z-10 opacity-90" />
             <img src={img(images, "arc_right", "arc.png")} alt="" aria-hidden="true" className="hero-arc pointer-events-none select-none absolute right-[14%] bottom-[80px] w-[520px] z-10 opacity-90 scale-x-[-1]" />
             <img src={img(images, "phone_left", "phone-left.png")} alt="" className="hero-phone-left relative w-[500px] rotate-[-8deg] z-20 -mr-12" />
             <div className="hero-text relative z-30 text-center px-2">
