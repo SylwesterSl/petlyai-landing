@@ -133,18 +133,18 @@ export default async function Page() {
             <img src={img(images, "phone_left", "phone-left.png")} alt="" className="w-[95%] max-w-[440px] rotate-[-8deg] -mt-8 -mb-12 z-20" />
           </section>
 
-          {/* Skalowanie hero dla telefonów w trybie "podgląd komputerowy" (coarse pointer + wąski ekran fizyczny) */}
+          {/* Hero w trybie desktop. Dla telefonów z "widokiem komputerowym" (coarse pointer)
+              powiększamy telefony i mocniej rozsuwamy je na boki, żeby napis miał miejsce. */}
           <style>{`
-            @media (pointer: coarse) and (max-width: 1280px) {
-              .hero-desktop-scale { transform: scale(0.55); transform-origin: top center; margin-bottom: -260px; }
-            }
-            @media (pointer: coarse) and (min-width: 1281px) and (max-width: 1600px) {
-              .hero-desktop-scale { transform: scale(0.7); transform-origin: top center; margin-bottom: -180px; }
+            @media (pointer: coarse) and (max-width: 1600px) {
+              .hero-phone-left  { width: 520px !important; margin-right: 40px !important; }
+              .hero-phone-right { width: 500px !important; margin-left: 40px !important; }
+              .hero-text { padding-left: 1rem; padding-right: 1rem; }
             }
           `}</style>
-          <section className="hidden md:flex relative items-center justify-center gap-0 px-6 mt-10 hero-desktop-scale">
-            <img src={img(images, "phone_left", "phone-left.png")} alt="" className="relative w-[440px] rotate-[-8deg] z-20 -mr-12" />
-            <div className="relative z-30 text-center px-2">
+          <section className="hidden md:flex relative items-center justify-center gap-0 px-6 mt-10">
+            <img src={img(images, "phone_left", "phone-left.png")} alt="" className="hero-phone-left relative w-[440px] rotate-[-8deg] z-20 -mr-12" />
+            <div className="hero-text relative z-30 text-center px-2">
               <h1 className="text-5xl xl:text-6xl font-bold leading-tight">
                 {c(content, "hero_title_line1")}<br />
                 <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">{c(content, "hero_title_line2")}</span><br />
@@ -156,7 +156,7 @@ export default async function Page() {
                 <a href="#funkcje" className="border px-6 py-3 rounded-full">{c(content, "hero_cta_secondary")}</a>
               </div>
             </div>
-            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="relative w-[420px] rotate-[4deg] z-20 -ml-12" />
+            <img src={img(images, "phone_right", "phone-right.png")} alt="" className="hero-phone-right relative w-[420px] rotate-[4deg] z-20 -ml-12" />
           </section>
         </>
       )}
