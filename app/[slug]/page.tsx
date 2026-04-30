@@ -1,167 +1,317 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ArrowRight, Sparkles, PawPrint, Heart, Star } from "lucide-react";
-import { getPage, listPages } from "@/lib/cms";
+import {
+  getContent,
+  getImages,
+  getFeatures,
+  getFooter,
+  getNavbar,
+  getLegacyNav,
+  getPage,
+  getTiles,
+  listPages,
+  c,
+  img,
+  type CmsTile,
+  type SiteFeature,
+} from "@/lib/cms";
+import { ShareButton } from "@/components/ShareButton";
+import PopupManager from "@/components/PopupManager";
 
 export const revalidate = 60;
 export const dynamicParams = true;
+
+const normalizePath = (value: string) => {
+  const clean = value.split("?")[0].split("#")[0];
+  return clean.startsWith("/") ? clean : `/${clean}`;
+};
+
+const titleFromSlug = (slug: string) =>
+  slug
+    .replace(/^\//, "")
+    .split("-")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+
+const pageDefaults: Record<string, { title: string; subtitle: string; points: string[] }> = {
+  "/profile": {
+    title: "Profile zwierząt",
+    subtitle: "Twórz profile i historię pupila w jednym pięknym miejscu.",
+    points: ["Wizytówka pupila", "Historia i wspomnienia", "Wygodne zarządzanie danymi"],
+  },
+  "/dodaj-pupila": {
+    title: "Dodaj swojego pupila",
+    subtitle: "Utwórz profil i dziel się przygodami swojego zwierzaka.",
+    points: ["Szybki start", "Dane, zdjęcia i opis", "Gotowe miejsce na rozwój profilu"],
+  },
+  "/media": {
+    title: "Zdjęcia i chwile",
+    subtitle: "Dodawaj zdjęcia i filmy, aby zachować najważniejsze momenty.",
+    points: ["Galeria wspomnień", "Zdjęcia i krótkie historie", "Chwile zawsze pod ręką"],
+  },
+};
+
+const getLinkedItem = (slug: string, tiles: CmsTile[], features: SiteFeature[]) => {
+  const path = normalizePath(slug);
+  const tile = tiles.find((item) => item.link && normalizePath(item.link) === path);
+  const feature = features.find((item) => item.link && normalizePath(item.link) === path);
+  const defaults = pageDefaults[path];
+
+  return {
+    title: tile?.title || feature?.title || defaults?.title || titleFromSlug(path) || "PetlyAI",
+    subtitle:
+      tile?.description ||
+      feature?.description ||
+      defaults?.subtitle ||
+      "Ta podstrona jest częścią ekosystemu PetlyAI i może być uzupełniana z CMS.",
+    points: defaults?.points || ["Spójny wygląd z landing page", "Treść możliwa do rozbudowy w CMS", "Gotowa sekcja dla użytkowników"],
+  };
+};
 
 export async function generateStaticParams() {
   const pages = await listPages();
   return pages.map((p) => ({ slug: p.slug.replace(/^\//, "") }));
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}): Promise<Metadata> {
-  const { slug } = await params;
-  const page = await getPage(slug);
-  const title = page?.seo_title || page?.title || prettifySlug(slug);
-  const description =
-    page?.seo_description ||
-    "PetlyAI — inteligentny portal dla właścicieli zwierząt. Profile pupili, społeczność, AI asystent.";
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const [page, tiles, features] = await Promise.all([getPage(params.slug), getTiles(), getFeatures()]);
+  const fallback = getLinkedItem(params.slug, tiles, features);
+  const title = page?.seo_title || page?.title || fallback.title;
+  const description = page?.seo_description || fallback.subtitle;
   const ogImage = page?.og_image || "https://petlyai.pl/images/og-image.jpg";
-  const url = `https://petlyai.pl/${slug}`;
+  const canonical = `https://petlyai.pl${normalizePath(page?.slug || params.slug)}`;
+
   return {
-    title: `${title} | PetlyAI`,
+    title,
     description,
     openGraph: {
       title,
       description,
       images: [ogImage],
-      url,
-      type: "article",
+      url: canonical,
     },
-    twitter: { card: "summary_large_image", title, description, images: [ogImage] },
-    alternates: { canonical: url },
+    twitter: { card: "summary_large_image", images: [ogImage] },
+    alternates: { canonical },
   };
 }
 
-function prettifySlug(slug: string) {
-  return slug
-    .replace(/^\//, "")
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
+export default async function CmsPage({ params }: { params: { slug: string } }) {
+export default async function CmsPage({ params }: { params: { slug: string } }) {
+  const [page, tiles, features, content, images, navPages, footerPages, legacyNav] =
+    await Promise.all([
+      getPage(params.slug),
+      getTiles(),
+      getFeatures(),
+      getContent(),
+      getImages(),
+      getNavbar(),
+      getFooter(),
+      getLegacyNav(),
+    ]);
 
-export default async function CmsPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
-  const page = await getPage(slug);
+  const fallback = getLinkedItem(params.slug, tiles, features);
+  const hasCmsContent = Boolean(page?.content?.trim());
+  const title = page?.title || fallback.title;
+  const subtitle = page?.seo_description || fallback.subtitle;
 
-  const title = page?.title || prettifySlug(slug);
-  const subtitle =
-    page?.seo_description ||
-    "Ta sekcja jest częścią portalu PetlyAI. Treść pojawi się tu wkrótce.";
+  // ----- Nawigacja (1:1 jak homepage) -----
+  const navItems =
+    navPages.length > 0
+      ? navPages.map((n) => ({ id: n.slug, label: n.title, href: n.slug }))
+      : legacyNav.map((n) => ({ id: n.id, label: n.label, href: n.href }));
+
+  // ----- Grupy linków w stopce (1:1 jak homepage) -----
+  const footerGroups = footerPages.reduce<Record<string, { slug: string; title: string }[]>>(
+    (acc, p) => {
+      const g = p.footer_group ?? "Linki";
+      (acc[g] ??= []).push({ slug: p.slug, title: p.title });
+      return acc;
+    },
+    {},
+  );
+  const footerGroupNames = Object.keys(footerGroups);
+
+  const shareLabel = c(content, "share_button_label") || "Udostępnij 🚀";
+  const shareUrl = c(content, "share_button_url") || "https://petlyai.pl";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0420] text-white">
-      {/* Galaxy background */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(168,85,247,0.25),transparent_55%),radial-gradient(ellipse_at_bottom,rgba(59,130,246,0.2),transparent_55%),radial-gradient(circle_at_30%_40%,rgba(236,72,153,0.18),transparent_45%)]" />
-        <div className="absolute inset-0 bg-[url('/images/stars.svg')] opacity-30 mix-blend-screen" />
-        <div className="absolute -top-32 left-1/2 h-[480px] w-[480px] -translate-x-1/2 rounded-full bg-purple-600/30 blur-[140px]" />
-        <div className="absolute bottom-0 right-0 h-[360px] w-[360px] rounded-full bg-pink-500/25 blur-[120px]" />
+    <main className="relative text-white overflow-hidden min-h-screen">
+      {/* GALAXY BACKGROUND — 1:1 jak homepage */}
+      <div className="fixed inset-0 -z-10">
+        <img src={img(images, "bg", "bg.jpg")} alt="" className="w-full h-full object-cover" />
+        <img src={img(images, "stars", "stars.png")} alt="" className="absolute inset-0 w-full h-full opacity-60" />
+        <img src={img(images, "gradient_glow", "gradient-glow.png")} alt="" className="absolute inset-0 w-full h-full opacity-70" />
       </div>
 
-      <main className="mx-auto w-full max-w-5xl px-4 pb-24 pt-12 md:pt-20">
-        {/* Breadcrumb */}
-        <nav className="mb-8 flex items-center gap-2 text-sm text-white/60">
-          <Link href="/" className="transition hover:text-white">
-            Strona główna
-          </Link>
-          <span>/</span>
-          <span className="text-white/90">{title}</span>
+      {/* HEADER — 1:1 jak homepage (logo + linki z CMS + przycisk "Pobierz aplikację") */}
+      <header className="flex justify-between items-center px-6 md:px-10 py-6 relative z-30">
+        <a href="/">
+          <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-24 md:w-36 h-auto object-contain" />
+        </a>
+        <nav className="hidden md:flex gap-8 text-sm opacity-80">
+          {navItems.map((n) => (
+            <a key={n.id} href={n.href} className="hover:text-pink-400 transition-colors">
+              {n.label}
+            </a>
+          ))}
         </nav>
+        <a
+          href={c(content, "header_cta_href") || "#"}
+          className="bg-gradient-to-r from-pink-500 to-purple-500 px-5 py-2 rounded-full"
+        >
+          {c(content, "header_cta")}
+        </a>
+      </header>
 
-        {/* HERO */}
-        <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.07] via-white/[0.04] to-transparent p-8 backdrop-blur-2xl shadow-[0_20px_80px_-20px_rgba(168,85,247,0.45)] md:p-14">
-          <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-pink-500/20 blur-3xl" />
-          <div className="absolute -bottom-24 -left-16 h-64 w-64 rounded-full bg-blue-500/20 blur-3xl" />
+      {/* HERO podstrony */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 md:px-6 mt-8 md:mt-12 text-center">
+        <h1 className="text-4xl md:text-6xl font-bold leading-tight bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(168,85,247,0.4)]">
+          {title}
+        </h1>
+        {subtitle && (
+          <p className="mt-5 text-base md:text-lg opacity-80 max-w-2xl mx-auto">{subtitle}</p>
+        )}
+      </section>
 
-          <div className="relative z-10">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-white/85 backdrop-blur">
-              <Sparkles className="h-3.5 w-3.5 text-pink-300" />
-              PetlyAI Portal
-            </div>
-
-            <h1 className="mt-6 bg-gradient-to-r from-white via-pink-100 to-purple-200 bg-clip-text text-4xl font-bold leading-tight text-transparent md:text-6xl">
-              {title}
-            </h1>
-
-            <p className="mt-5 max-w-2xl text-base leading-relaxed text-white/75 md:text-lg">
-              {subtitle}
-            </p>
-
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link
+      {/* CONTENT — treść z CMS (lub fallback) */}
+      <section className="relative z-10 max-w-5xl mx-auto px-4 md:px-6 mt-10 md:mt-14 mb-20">
+        <div className="p-6 md:p-10 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_-8px_rgba(168,85,247,0.3)]">
+          {hasCmsContent ? (
+            <article
+              className="cms-article prose prose-invert max-w-none
+                         prose-headings:bg-gradient-to-r prose-headings:from-pink-400 prose-headings:to-purple-400 prose-headings:bg-clip-text prose-headings:text-transparent
+                         prose-h2:text-2xl md:prose-h2:text-3xl prose-h2:mt-8 prose-h2:mb-4
+                         prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                         prose-p:opacity-90 prose-p:leading-relaxed
+                         prose-a:text-pink-300 hover:prose-a:text-pink-200
+                         prose-strong:text-white prose-li:opacity-90
+                         prose-ul:my-4 prose-ol:my-4
+                         prose-hr:border-white/10"
+              dangerouslySetInnerHTML={{ __html: page!.content }}
+            />
+          ) : (
+            <div className="text-center">
+              <p className="opacity-80 text-base md:text-lg mb-6">
+                {fallback.subtitle}
+              </p>
+              <ul className="grid md:grid-cols-3 gap-4 text-left">
+                {fallback.points.map((p) => (
+                  <li
+                    key={p}
+                    className="p-4 rounded-xl bg-white/5 border border-white/10 text-sm opacity-90"
+                  >
+                    {p}
+                  </li>
+                ))}
+              </ul>
+              <a
                 href="/"
-                className="group inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 font-semibold text-white shadow-[0_0_30px_rgba(236,72,153,0.45)] transition hover:scale-105 hover:shadow-[0_0_40px_rgba(236,72,153,0.7)]"
+                className="inline-block mt-8 bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full"
               >
                 Wróć do strony głównej
-                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
-              </Link>
-              <Link
-                href="/kontakt"
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/10"
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* FOOTER — 1:1 jak homepage (z pieskiem, kotkiem, tłem footera, linkami z CMS) */}
+      <footer className="mt-10 pt-16 pb-8 px-4 relative text-white overflow-hidden">
+        {/* Pies i kot — identycznie jak w sekcji CTA na homepage */}
+        <div className="hidden md:block">
+          <img
+            src={img(images, "dog_left", "dog-left.png")}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute left-0 -top-24 z-30 w-[260px] lg:w-[320px] xl:w-[360px]"
+          />
+          <img
+            src={img(images, "cat", "cat.png")}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute right-0 -top-20 z-30 w-[220px] lg:w-[280px] xl:w-[320px]"
+          />
+        </div>
+        <div className="md:hidden flex justify-between items-end -mt-4 mb-4 px-2">
+          <img src={img(images, "dog_left", "dog-left.png")} alt="" className="w-[40%] max-w-[180px]" />
+          <img src={img(images, "cat", "cat.png")} alt="" className="w-[35%] max-w-[160px]" />
+        </div>
+
+        {/* Tło footera (gwiazdy + łuk) */}
+        <img
+          src={img(images, "footer_bg", "footer-bg.jpg")}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover -z-10"
+        />
+        <div className="absolute inset-0 bg-black/40 -z-10" />
+
+        <div className="relative max-w-6xl mx-auto md:grid md:grid-cols-4 md:gap-10">
+          <div className="mb-7 md:mb-0">
+            <img src={img(images, "logo", "logo.png")} alt="PetlyAI" className="w-28 md:w-36 mb-3" />
+            <p className="text-sm opacity-70 max-w-xs">{c(content, "footer_description")}</p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-8 mb-7 md:contents">
+            {footerGroupNames.length > 0 ? (
+              footerGroupNames.slice(0, 2).map((group) => (
+                <div key={group}>
+                  <p className="font-semibold mb-2">{group}</p>
+                  <div className="flex flex-col gap-2 text-sm opacity-70">
+                    {footerGroups[group].map((l) => (
+                      <a key={l.slug} href={l.slug} className="hover:text-pink-400">
+                        {l.title}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))
+            ) : (
+              [1, 2].map((col) => (
+                <div key={col}>
+                  <p className="font-semibold mb-2">{c(content, `footer_col${col}_title`)}</p>
+                  <div className="flex flex-col gap-2 text-sm opacity-70">
+                    {[1, 2, 3].map((i) => {
+                      const label = c(content, `footer_col${col}_link${i}_label`);
+                      const href = c(content, `footer_col${col}_link${i}_href`) || "#";
+                      return label ? (
+                        <a key={i} href={href} className="hover:text-pink-400">
+                          {label}
+                        </a>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+
+          <div>
+            <p className="font-semibold mb-2">{c(content, "footer_col3_title") || "Pobierz"}</p>
+            <div className="flex items-center justify-between gap-3 md:block">
+              <a
+                href={c(content, "header_cta_href") || "#"}
+                className="inline-block bg-gradient-to-r from-pink-500 to-purple-500 px-6 py-3 rounded-full"
               >
-                Skontaktuj się
-              </Link>
+                {c(content, "hero_cta_primary")}
+              </a>
+              <div className="md:hidden">
+                <ShareButton label={shareLabel} url={shareUrl} />
+              </div>
+            </div>
+            <p className="text-xs opacity-60 mt-2">{c(content, "footer_download_text")}</p>
+            <div className="hidden md:block mt-3">
+              <ShareButton label={shareLabel} url={shareUrl} />
             </div>
           </div>
-        </section>
+        </div>
+        <div className="text-center text-xs opacity-60 mt-10">
+          {c(content, "footer_copyright")}
+        </div>
+      </footer>
 
-        {/* CONTENT */}
-        {page?.content ? (
-          <article className="mt-10 rounded-3xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-2xl shadow-[0_10px_40px_-15px_rgba(99,102,241,0.4)] md:p-12">
-            <div
-              className="prose prose-invert max-w-none prose-headings:bg-gradient-to-r prose-headings:from-pink-200 prose-headings:to-purple-200 prose-headings:bg-clip-text prose-headings:text-transparent prose-a:text-pink-300 hover:prose-a:text-pink-200 prose-strong:text-white prose-img:rounded-2xl prose-img:border prose-img:border-white/10"
-              dangerouslySetInnerHTML={{ __html: page.content }}
-            />
-          </article>
-        ) : (
-          <section className="mt-10 grid gap-5 md:grid-cols-3">
-            {[
-              { Icon: PawPrint, title: "Część portalu", desc: "Spójny wygląd na każdej podstronie." },
-              { Icon: Heart, title: "Stworzone z miłością", desc: "Dla psów, kotów i ich opiekunów." },
-              { Icon: Star, title: "Treść wkrótce", desc: "Pracujemy nad zawartością tej sekcji." },
-            ].map(({ Icon, title: t, desc }) => (
-              <div
-                key={t}
-                className="group rounded-2xl border border-white/10 bg-white/[0.04] p-6 backdrop-blur-xl transition hover:scale-[1.02] hover:border-white/20 hover:bg-white/[0.07] hover:shadow-[0_0_30px_rgba(168,85,247,0.25)]"
-              >
-                <div className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-500/20 to-purple-500/20 ring-1 ring-white/10">
-                  <Icon className="h-6 w-6 text-pink-300" />
-                </div>
-                <h3 className="mt-4 text-lg font-semibold text-white">{t}</h3>
-                <p className="mt-2 text-sm text-white/65">{desc}</p>
-              </div>
-            ))}
-          </section>
-        )}
-
-        {/* CTA bottom */}
-        <section className="mt-12 overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-blue-500/15 p-8 text-center backdrop-blur-2xl md:p-12">
-          <h2 className="bg-gradient-to-r from-white to-pink-200 bg-clip-text text-2xl font-bold text-transparent md:text-3xl">
-            Zostań częścią społeczności PetlyAI
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-white/75">
-            Dołącz do tysięcy opiekunów, którzy dbają o swoje pupile mądrzej dzięki AI.
-          </p>
-          <Link
-            href="/"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3 font-semibold text-purple-700 shadow-[0_0_30px_rgba(255,255,255,0.35)] transition hover:scale-105"
-          >
-            Zaczynamy
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </section>
-      </main>
-    </div>
+      {/* CMS POPUPS dla tej podstrony */}
+      <PopupManager pageSlug={normalizePath(params.slug)} />
+    </main>
   );
 }
