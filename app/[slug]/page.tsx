@@ -20,6 +20,14 @@ import PopupManager from "@/components/PopupManager";
 export const revalidate = 60;
 export const dynamicParams = true;
 
+type CmsRouteParams = { slug: string };
+type CmsRouteProps = { params: CmsRouteParams | Promise<CmsRouteParams> };
+
+const getRouteSlug = async (params: CmsRouteProps["params"]) => {
+  const resolved = await params;
+  return resolved.slug;
+};
+
 const normalizePath = (value: string) => {
   const clean = value.split("?")[0].split("#")[0];
   return clean.startsWith("/") ? clean : `/${clean}`;
@@ -73,13 +81,14 @@ export async function generateStaticParams() {
   return pages.map((p) => ({ slug: p.slug.replace(/^\//, "") }));
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-  const [page, tiles, features] = await Promise.all([getPage(params.slug), getTiles(), getFeatures()]);
-  const fallback = getLinkedItem(params.slug, tiles, features);
+export async function generateMetadata({ params }: CmsRouteProps): Promise<Metadata> {
+  const slug = await getRouteSlug(params);
+  const [page, tiles, features] = await Promise.all([getPage(slug), getTiles(), getFeatures()]);
+  const fallback = getLinkedItem(slug, tiles, features);
   const title = page?.seo_title || page?.title || fallback.title;
   const description = page?.seo_description || fallback.subtitle;
   const ogImage = page?.og_image || "https://petlyai.pl/images/og-image.jpg";
-  const canonical = `https://petlyai.pl${normalizePath(page?.slug || params.slug)}`;
+  const canonical = `https://petlyai.pl${normalizePath(page?.slug || slug)}`;
 
   return {
     title,
@@ -95,10 +104,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
-export default async function CmsPage({ params }: { params: { slug: string } }) {
+export default async function CmsPage({ params }: CmsRouteProps) {
+  const slug = await getRouteSlug(params);
   const [page, tiles, features, content, images, navPages, footerPages, legacyNav] =
     await Promise.all([
-      getPage(params.slug),
+      getPage(slug),
       getTiles(),
       getFeatures(),
       getContent(),
@@ -108,7 +118,7 @@ export default async function CmsPage({ params }: { params: { slug: string } }) 
       getLegacyNav(),
     ]);
 
-  const fallback = getLinkedItem(params.slug, tiles, features);
+  const fallback = getLinkedItem(slug, tiles, features);
   const hasCmsContent = Boolean(page?.content?.trim());
   const title = page?.title || fallback.title;
   const subtitle = page?.seo_description || fallback.subtitle;
@@ -310,7 +320,7 @@ export default async function CmsPage({ params }: { params: { slug: string } }) 
       </footer>
 
       {/* CMS POPUPS dla tej podstrony */}
-      <PopupManager pageSlug={normalizePath(params.slug)} />
+      <PopupManager pageSlug={normalizePath(slug)} />
     </main>
   );
 }
