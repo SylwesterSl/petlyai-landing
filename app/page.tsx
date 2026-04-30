@@ -72,16 +72,20 @@ export default async function Page() {
   const shareLabel = c(content, "share_button_label") || "Udostępnij 🚀";
   const shareUrl = c(content, "share_button_url") || "https://petlyai.pl";
 
-  const renderHowItWorksCard = (f: SiteFeature) => {
+  const renderHowItWorksCard = (f: SiteFeature, idx: number = 0) => {
+    const palette = tilePalette[idx % tilePalette.length];
+    const gradient = f.gradient && f.gradient.trim() ? f.gradient : palette.gradient;
+    const iconColor = f.icon_color && f.icon_color.trim() ? f.icon_color : palette.iconColor;
+
     const inner = (
       <div className={`group relative p-[1.5px] rounded-2xl hover:scale-105 transition duration-300 ${f.link ? "cursor-pointer" : ""}`}>
-        <div className={`p-[1.5px] rounded-2xl bg-gradient-to-r ${f.gradient}`}>
+        <div className={`p-[1.5px] rounded-2xl bg-gradient-to-r ${gradient}`}>
           <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl relative z-10 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-400/10 blur-xl opacity-40 group-hover:opacity-70 transition" />
+            <div className={`absolute inset-0 bg-gradient-to-r ${gradient} blur-xl opacity-40 group-hover:opacity-70 transition`} />
             <div className="relative z-10 text-center">
-              <div className="relative mb-6 flex justify-center">
-                <div className="absolute w-16 h-16 bg-pink-500/30 blur-2xl rounded-full" />
-                {renderIcon(f.icon, `relative w-16 h-16 ${f.icon_color} drop-shadow-[0_0_15px_rgba(236,72,153,0.9)]`)}
+              <div className={`relative mb-6 flex justify-center ${iconColor}`}>
+                <div className="absolute w-16 h-16 blur-2xl rounded-full opacity-40 bg-current" />
+                {renderIcon(f.icon, `relative w-16 h-16 ${iconColor} drop-shadow-[0_0_15px_currentColor]`)}
               </div>
               <h3 className="font-semibold text-lg">{f.title}</h3>
               <p className="text-sm opacity-70 mt-2">{f.description}</p>
@@ -193,7 +197,7 @@ export default async function Page() {
         <section className="mt-4 md:mt-16 text-center px-4 relative z-10">
           <h2 className="text-3xl md:text-4xl font-bold mb-8 md:mb-10">{c(content, "how_it_works_title")}</h2>
           <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {howItWorks.map(renderHowItWorksCard)}
+            {howItWorks.map((f, idx) => renderHowItWorksCard(f, idx))}
           </div>
         </section>
       )}
