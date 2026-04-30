@@ -244,14 +244,14 @@ export default async function CmsPage({ params }: CmsRouteProps) {
             alt=""
             aria-hidden="true"
             className="pointer-events-none absolute left-0 z-30 w-[200px] lg:w-[240px] xl:w-[280px] h-auto"
-            style={{ bottom: "calc(100% - 90px)" }}
+            style={{ bottom: "calc(100% - 100px)" }}
           />
           <img
             src={img(images, "cat", "cat.png")}
             alt=""
             aria-hidden="true"
             className="pointer-events-none absolute right-0 z-30 w-[170px] lg:w-[210px] xl:w-[250px] h-auto"
-            style={{ bottom: "calc(100% - 80px)" }}
+            style={{ bottom: "calc(100% - 90px)" }}
           />
         </div>
         <div className="md:hidden flex justify-between items-end -mt-20 mb-4 px-2 relative z-30">
