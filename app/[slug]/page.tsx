@@ -255,7 +255,7 @@ export default async function CmsPage({ params }: CmsRouteProps) {
           />
         </div>
         <div className="md:hidden flex justify-between items-end -mt-20 mb-4 px-2 relative z-30">
-          <img src={img(images, "dog_left", "dog-left.png")} alt="" className="w-[32%] max-w-[140px] h-auto" />
+          <img src={img(images, "dog_left", "dog-left.png")} alt="" className="w-[32%] max-w-[120px] h-auto" />
           <img src={img(images, "cat", "cat.png")} alt="" className="w-[28%] max-w-[120px] h-auto" />
         </div>
 
