@@ -96,7 +96,6 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 }
 
 export default async function CmsPage({ params }: { params: { slug: string } }) {
-export default async function CmsPage({ params }: { params: { slug: string } }) {
   const [page, tiles, features, content, images, navPages, footerPages, legacyNav] =
     await Promise.all([
       getPage(params.slug),
