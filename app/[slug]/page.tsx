@@ -225,35 +225,39 @@ export default async function CmsPage({ params }: CmsRouteProps) {
       </section>
 
       {/* FOOTER — 1:1 jak homepage (z pieskiem, kotkiem, tłem footera, linkami z CMS) */}
-      <footer className="mt-10 pt-16 pb-8 px-4 relative text-white overflow-hidden">
-        {/* Pies i kot — identycznie jak w sekcji CTA na homepage */}
-        <div className="hidden md:block">
+      <footer className="mt-32 md:mt-40 pt-16 pb-8 px-4 relative text-white">
+        {/* Tło footera (gwiazdy + łuk) — w osobnym kontenerze z overflow-hidden, żeby tło nie wystawało */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <img
+            src={img(images, "footer_bg", "footer_bg.jpg") || img(images, "footer_bg", "footer-bg.jpg")}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+
+        {/* Pies i kot — siedzą NA krawędzi footera (lekko nachodzą na footer) */}
+        <div className="hidden md:block pointer-events-none">
           <img
             src={img(images, "dog_left", "dog-left.png")}
             alt=""
             aria-hidden="true"
-            className="pointer-events-none absolute left-0 -top-24 z-30 w-[260px] lg:w-[320px] xl:w-[360px]"
+            className="pointer-events-none absolute left-0 z-30 w-[200px] lg:w-[240px] xl:w-[280px] h-auto"
+            style={{ bottom: "calc(100% - 60px)" }}
           />
           <img
             src={img(images, "cat", "cat.png")}
             alt=""
             aria-hidden="true"
-            className="pointer-events-none absolute right-0 -top-20 z-30 w-[220px] lg:w-[280px] xl:w-[320px]"
+            className="pointer-events-none absolute right-0 z-30 w-[170px] lg:w-[210px] xl:w-[250px] h-auto"
+            style={{ bottom: "calc(100% - 50px)" }}
           />
         </div>
-        <div className="md:hidden flex justify-between items-end -mt-4 mb-4 px-2">
-          <img src={img(images, "dog_left", "dog-left.png")} alt="" className="w-[40%] max-w-[180px]" />
-          <img src={img(images, "cat", "cat.png")} alt="" className="w-[35%] max-w-[160px]" />
+        <div className="md:hidden flex justify-between items-end -mt-20 mb-4 px-2 relative z-30">
+          <img src={img(images, "dog_left", "dog-left.png")} alt="" className="w-[32%] max-w-[140px] h-auto" />
+          <img src={img(images, "cat", "cat.png")} alt="" className="w-[28%] max-w-[120px] h-auto" />
         </div>
-
-        {/* Tło footera (gwiazdy + łuk) */}
-        <img
-          src={img(images, "footer_bg", "footer-bg.jpg")}
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 w-full h-full object-cover -z-10"
-        />
-        <div className="absolute inset-0 bg-black/40 -z-10" />
 
         <div className="relative max-w-6xl mx-auto md:grid md:grid-cols-4 md:gap-10">
           <div className="mb-7 md:mb-0">
