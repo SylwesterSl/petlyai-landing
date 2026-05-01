@@ -42,6 +42,10 @@ export interface CmsTile {
   image_url: string | null;
   link: string;
   position: number;
+  visible?: boolean;
+  icon?: string | null;
+  gradient?: string | null;
+  icon_color?: string | null;
 }
 
 export const getPage = async (slug: string): Promise<CmsPage | null> => {
