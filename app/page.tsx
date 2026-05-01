@@ -1,4 +1,8 @@
-import { PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain, Sparkles, Users, Star, Bell, MessageCircle, Image as ImageIcon } from "lucide-react";
+import {
+  PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain, Sparkles, Users, Star, Bell, MessageCircle,
+  Image as ImageIcon, Stethoscope, Activity, Award, BookOpen, Calendar, Map, ShieldCheck,
+  Cat, Dog, Bone, Bird, Fish, Smile, Gift, Music, Zap,
+} from "lucide-react";
 import { ShareButton } from "@/components/ShareButton";
 import PopupManager from "@/components/PopupManager";
 import {
@@ -25,6 +29,8 @@ export const metadata = {
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain,
   Sparkles, Users, Star, Bell, MessageCircle, Image: ImageIcon,
+  Stethoscope, Activity, Award, BookOpen, Calendar, Map, ShieldCheck,
+  Cat, Dog, Bone, Bird, Fish, Smile, Gift, Music, Zap,
 };
 const renderIcon = (name: string, className: string) => {
   const Icon = iconMap[name] || PawPrint;
@@ -210,13 +216,19 @@ export default async function Page() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {tileCards.map((t, idx) => {
                 const p = tilePalette[idx % tilePalette.length];
+                // Use CMS values when set; fall back to the auto palette.
+                const tAny = t as unknown as { gradient?: string | null; icon?: string | null; icon_color?: string | null };
+                const gradient = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.gradient;
+                const iconBg = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.iconBg;
+                const tileIcon = tAny.icon && tAny.icon.trim() ? tAny.icon : p.icon;
+                const iconColor = tAny.icon_color && tAny.icon_color.trim() ? tAny.icon_color : p.iconColor;
                 return (
                   <a key={t.id} href={t.link} className="group block text-left">
-                    <div className={`relative p-[1.5px] rounded-2xl bg-gradient-to-r ${p.gradient} hover:scale-[1.03] transition duration-300`}>
-                      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${p.gradient} opacity-50 blur-xl group-hover:opacity-80 transition`} />
+                    <div className={`relative p-[1.5px] rounded-2xl bg-gradient-to-r ${gradient} hover:scale-[1.03] transition duration-300`}>
+                      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${gradient} opacity-50 blur-xl group-hover:opacity-80 transition`} />
                       <div className="relative z-10 p-5 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-start gap-4 min-h-[112px]">
-                        <div className={`shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${p.iconBg} flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)]`}>
-                          {renderIcon(p.icon, `w-6 h-6 ${p.iconColor}`)}
+                        <div className={`shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${iconBg} flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)]`}>
+                          {renderIcon(tileIcon, `w-6 h-6 ${iconColor}`)}
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg leading-tight">{t.title}</h3>
