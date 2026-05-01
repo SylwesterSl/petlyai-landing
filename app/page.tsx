@@ -73,7 +73,6 @@ export default async function Page() {
   const shareUrl = c(content, "share_button_url") || "https://petlyai.pl";
 
   const renderHowItWorksCard = (f: SiteFeature, idx: number = 0) => {
-    // Fallbacki z palety, jeśli rekord w CMS nie ma własnego gradientu / koloru ikony
     const palette = tilePalette[idx % tilePalette.length];
     const gradient = f.gradient && f.gradient.trim() ? f.gradient : palette.gradient;
     const iconColor = f.icon_color && f.icon_color.trim() ? f.icon_color : palette.iconColor;
@@ -81,16 +80,15 @@ export default async function Page() {
     const inner = (
       <div className={`group relative p-[1.5px] rounded-2xl hover:scale-105 transition duration-300 ${f.link ? "cursor-pointer" : ""}`}>
         <div className={`p-[1.5px] rounded-2xl bg-gradient-to-r ${gradient}`}>
-          <div className={`p-6 rounded-2xl bg-gradient-to-br ${gradient} backdrop-blur-xl relative z-10 overflow-hidden`}>
-            <div className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-30 blur-xl group-hover:opacity-60 transition`} />
+          <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl relative z-10 overflow-hidden">
+            <div className={`absolute inset-0 bg-gradient-to-r ${gradient} blur-xl opacity-40 group-hover:opacity-70 transition`} />
             <div className="relative z-10 text-center">
               <div className={`relative mb-6 flex justify-center ${iconColor}`}>
-                {/* Glow podąża za aktualnym kolorem ikony (currentColor), zamiast hardcoded różowego */}
-                <div className="absolute w-16 h-16 rounded-full blur-2xl opacity-40 bg-current" />
+                <div className="absolute w-16 h-16 blur-2xl rounded-full opacity-40 bg-current" />
                 {renderIcon(f.icon, `relative w-16 h-16 ${iconColor} drop-shadow-[0_0_15px_currentColor]`)}
               </div>
               <h3 className="font-semibold text-lg">{f.title}</h3>
-              <p className="text-sm opacity-80 mt-2">{f.description}</p>
+              <p className="text-sm opacity-70 mt-2">{f.description}</p>
             </div>
           </div>
         </div>
@@ -212,18 +210,13 @@ export default async function Page() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {tileCards.map((t, idx) => {
                 const p = tilePalette[idx % tilePalette.length];
-                // Preferuj wartości z CMS, fallback do palety
-                const tAny = t as unknown as { gradient?: string | null; icon?: string | null };
-                const gradient = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.gradient;
-                const iconBg = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.iconBg;
-                const tileIcon = tAny.icon && tAny.icon.trim() ? tAny.icon : p.icon;
                 return (
                   <a key={t.id} href={t.link} className="group block text-left">
-                    <div className={`relative p-[1.5px] rounded-2xl bg-gradient-to-r ${gradient} hover:scale-[1.03] transition duration-300`}>
-                      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${gradient} opacity-50 blur-xl group-hover:opacity-80 transition`} />
+                    <div className={`relative p-[1.5px] rounded-2xl bg-gradient-to-r ${p.gradient} hover:scale-[1.03] transition duration-300`}>
+                      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-r ${p.gradient} opacity-50 blur-xl group-hover:opacity-80 transition`} />
                       <div className="relative z-10 p-5 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/10 flex items-start gap-4 min-h-[112px]">
-                        <div className={`shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${iconBg} flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)]`}>
-                          {renderIcon(tileIcon, `w-6 h-6 ${p.iconColor}`)}
+                        <div className={`shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br ${p.iconBg} flex items-center justify-center shadow-[0_8px_24px_-6px_rgba(0,0,0,0.5)]`}>
+                          {renderIcon(p.icon, `w-6 h-6 ${p.iconColor}`)}
                         </div>
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg leading-tight">{t.title}</h3>
