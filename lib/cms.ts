@@ -42,7 +42,6 @@ export interface CmsTile {
   image_url: string | null;
   link: string;
   position: number;
-  visible?: boolean;
   icon?: string | null;
   gradient?: string | null;
   icon_color?: string | null;
@@ -146,4 +145,23 @@ export const img = (map: Record<string, string>, key: string, fallback: string) 
 export const isSectionVisible = (sections: SiteSection[], key: string) => {
   const s = sections.find((x) => x.key === key);
   return s ? s.visible : true;
+};
+
+// ---------- Galeria ----------
+export interface GalleryItem {
+  id: string;
+  image_url: string;
+  caption: string | null;
+  alt: string | null;
+  position: number;
+  visible: boolean;
+}
+
+export const getGallery = async (): Promise<GalleryItem[]> => {
+  const { data } = await cms
+    .from("site_gallery")
+    .select("*")
+    .eq("visible", true)
+    .order("position", { ascending: true });
+  return (data as GalleryItem[]) ?? [];
 };
