@@ -213,9 +213,10 @@ export default async function Page() {
               {tileCards.map((t, idx) => {
                 const p = tilePalette[idx % tilePalette.length];
                 // Preferuj wartości z CMS, fallback do palety
-                const gradient = t.gradient && t.gradient.trim() ? t.gradient : p.gradient;
-                const iconBg = t.gradient && t.gradient.trim() ? t.gradient : p.iconBg;
-                const tileIcon = t.icon && t.icon.trim() ? t.icon : p.icon;
+                const tAny = t as unknown as { gradient?: string | null; icon?: string | null };
+                const gradient = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.gradient;
+                const iconBg = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.iconBg;
+                const tileIcon = tAny.icon && tAny.icon.trim() ? tAny.icon : p.icon;
                 return (
                   <a key={t.id} href={t.link} className="group block text-left">
                     <div className={`relative p-[1.5px] rounded-2xl bg-gradient-to-r ${gradient} hover:scale-[1.03] transition duration-300`}>
