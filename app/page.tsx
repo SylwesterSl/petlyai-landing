@@ -1,8 +1,4 @@
-import {
-  PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain, Sparkles, Users, Star, Bell, MessageCircle,
-  Image as ImageIcon, Stethoscope, Activity, Award, BookOpen, Calendar, Map, ShieldCheck,
-  Cat, Dog, Bone, Bird, Fish, Smile, Gift, Music, Zap,
-} from "lucide-react";
+import { PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain, Sparkles, Users, Star, Bell, MessageCircle, Image as ImageIcon, Stethoscope, Activity, Award, BookOpen, Calendar, Map, ShieldCheck, Cat, Dog, Bone, Bird, Fish, Smile, Gift, Music, Zap } from "lucide-react";
 import { ShareButton } from "@/components/ShareButton";
 import PopupManager from "@/components/PopupManager";
 import {
@@ -29,12 +25,33 @@ export const metadata = {
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   PawPrint, Camera, Heart, ThumbsUp, Trophy, Brain,
   Sparkles, Users, Star, Bell, MessageCircle, Image: ImageIcon,
-  Stethoscope, Activity, Award, BookOpen, Calendar, Map, ShieldCheck,
-  Cat, Dog, Bone, Bird, Fish, Smile, Gift, Music, Zap,
+  Stethoscope, Activity, Award, BookOpen, Calendar, Map,
+  ShieldCheck, Cat, Dog, Bone, Bird, Fish, Smile, Gift, Music, Zap,
 };
 const renderIcon = (name: string, className: string) => {
   const Icon = iconMap[name] || PawPrint;
   return <Icon className={className} />;
+};
+
+const gradientMap: Record<string, { card: string; icon: string }> = {
+  "from-pink-500 to-purple-500": { card: "from-pink-500/30 to-purple-500/30", icon: "from-pink-500 to-purple-500" },
+  "from-orange-500 to-pink-500": { card: "from-orange-500/30 to-pink-500/30", icon: "from-orange-500 to-pink-500" },
+  "from-blue-500 to-cyan-500": { card: "from-blue-500/30 to-cyan-500/30", icon: "from-blue-500 to-cyan-500" },
+  "from-yellow-500 to-orange-500": { card: "from-yellow-500/30 to-orange-500/30", icon: "from-yellow-500 to-orange-500" },
+  "from-purple-500 to-indigo-500": { card: "from-purple-500/30 to-indigo-500/30", icon: "from-purple-500 to-indigo-500" },
+  "from-pink-500 to-rose-500": { card: "from-pink-500/30 to-rose-500/30", icon: "from-pink-500 to-rose-500" },
+  "from-emerald-500 to-teal-500": { card: "from-emerald-500/30 to-teal-500/30", icon: "from-emerald-500 to-teal-500" },
+  "from-violet-500 to-fuchsia-500": { card: "from-violet-500/30 to-fuchsia-500/30", icon: "from-violet-500 to-fuchsia-500" },
+  "from-sky-500 to-blue-500": { card: "from-sky-500/30 to-blue-500/30", icon: "from-sky-500 to-blue-500" },
+  "from-pink-500 via-purple-500 to-blue-500": { card: "from-pink-500/30 via-purple-500/30 to-blue-500/30", icon: "from-pink-500 via-purple-500 to-blue-500" },
+  "from-blue-900 via-purple-800 to-pink-700": { card: "from-blue-900/40 via-purple-800/40 to-pink-700/40", icon: "from-blue-900 via-purple-800 to-pink-700" },
+  "from-pink-600 via-indigo-500 to-blue-700": { card: "from-pink-600/40 via-indigo-500/40 to-blue-700/40", icon: "from-pink-600 via-indigo-500 to-blue-700" },
+};
+
+const iconColorMap: Record<string, string> = {
+  "text-blue-400": "text-blue-400", "text-pink-400": "text-pink-400", "text-purple-400": "text-purple-400",
+  "text-orange-400": "text-orange-400", "text-cyan-400": "text-cyan-400", "text-yellow-400": "text-yellow-400",
+  "text-emerald-400": "text-emerald-400", "text-rose-400": "text-rose-400", "text-indigo-400": "text-indigo-400", "text-white": "text-white",
 };
 
 // Paleta gradientów + ikon do auto-stylowania kafelków CMS (gdy nie mają własnych)
@@ -79,22 +96,25 @@ export default async function Page() {
   const shareUrl = c(content, "share_button_url") || "https://petlyai.pl";
 
   const renderHowItWorksCard = (f: SiteFeature, idx: number = 0) => {
+    // Fallbacki z palety, jeśli rekord w CMS nie ma własnego gradientu / koloru ikony
     const palette = tilePalette[idx % tilePalette.length];
-    const gradient = f.gradient && f.gradient.trim() ? f.gradient : palette.gradient;
-    const iconColor = f.icon_color && f.icon_color.trim() ? f.icon_color : palette.iconColor;
+    const gradientValue = f.gradient && f.gradient.trim() ? f.gradient : "";
+    const gradient = gradientMap[gradientValue]?.card ?? palette.gradient;
+    const iconColor = iconColorMap[f.icon_color] ?? palette.iconColor;
 
     const inner = (
       <div className={`group relative p-[1.5px] rounded-2xl hover:scale-105 transition duration-300 ${f.link ? "cursor-pointer" : ""}`}>
         <div className={`p-[1.5px] rounded-2xl bg-gradient-to-r ${gradient}`}>
-          <div className="p-6 rounded-2xl bg-white/5 backdrop-blur-xl relative z-10 overflow-hidden">
-            <div className={`absolute inset-0 bg-gradient-to-r ${gradient} blur-xl opacity-40 group-hover:opacity-70 transition`} />
+          <div className={`p-6 rounded-2xl bg-gradient-to-br ${gradient} backdrop-blur-xl relative z-10 overflow-hidden`}>
+            <div className={`absolute inset-0 bg-gradient-to-r ${gradient} opacity-30 blur-xl group-hover:opacity-60 transition`} />
             <div className="relative z-10 text-center">
               <div className={`relative mb-6 flex justify-center ${iconColor}`}>
-                <div className="absolute w-16 h-16 blur-2xl rounded-full opacity-40 bg-current" />
+                {/* Glow podąża za aktualnym kolorem ikony (currentColor), zamiast hardcoded różowego */}
+                <div className="absolute w-16 h-16 rounded-full blur-2xl opacity-40 bg-current" />
                 {renderIcon(f.icon, `relative w-16 h-16 ${iconColor} drop-shadow-[0_0_15px_currentColor]`)}
               </div>
               <h3 className="font-semibold text-lg">{f.title}</h3>
-              <p className="text-sm opacity-70 mt-2">{f.description}</p>
+              <p className="text-sm opacity-80 mt-2">{f.description}</p>
             </div>
           </div>
         </div>
@@ -216,12 +236,13 @@ export default async function Page() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {tileCards.map((t, idx) => {
                 const p = tilePalette[idx % tilePalette.length];
-                // Use CMS values when set; fall back to the auto palette.
+                // Preferuj wartości z CMS, fallback do palety
                 const tAny = t as unknown as { gradient?: string | null; icon?: string | null; icon_color?: string | null };
-                const gradient = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.gradient;
-                const iconBg = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : p.iconBg;
+                const gradientValue = tAny.gradient && tAny.gradient.trim() ? tAny.gradient : "";
+                const gradient = gradientMap[gradientValue]?.card ?? p.gradient;
+                const iconBg = gradientMap[gradientValue]?.icon ?? p.iconBg;
+                const iconColor = iconColorMap[tAny.icon_color ?? ""] ?? p.iconColor;
                 const tileIcon = tAny.icon && tAny.icon.trim() ? tAny.icon : p.icon;
-                const iconColor = tAny.icon_color && tAny.icon_color.trim() ? tAny.icon_color : p.iconColor;
                 return (
                   <a key={t.id} href={t.link} className="group block text-left">
                     <div className={`relative p-[1.5px] rounded-2xl bg-gradient-to-r ${gradient} hover:scale-[1.03] transition duration-300`}>
