@@ -67,17 +67,17 @@ export default function ConfirmEmailClient() {
         onClick={handleOpenApp}
         className="inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base md:text-lg font-semibold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 shadow-[0_8px_32px_-8px_rgba(168,85,247,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(168,85,247,0.8)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
       >
-        Otwórz aplikację
+        Potwierdź konto
       </button>
 
       <p className="text-sm opacity-70 max-w-md">
-        Jeśli aplikacja jest zainstalowana, otworzy się automatycznie.
+        Aplikacja otworzy się automatycznie, jeżeli jest zainstalowana na Twoim urządzeniu
       </p>
 
       {showFallback && (
         <div className="mt-4 pt-8 border-t border-white/10 w-full max-w-md animate-fade-in">
           <p className="text-base md:text-lg font-medium mb-5">
-            Nie masz aplikacji? Pobierz ją:
+            Nie masz aplikacji? Pobierz ją poniżej:
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             {(platform === "ios" || platform === "desktop") && (
