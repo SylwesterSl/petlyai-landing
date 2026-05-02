@@ -67,7 +67,7 @@ export default function ConfirmEmailClient() {
         onClick={handleOpenApp}
         className="inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base md:text-lg font-semibold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 shadow-[0_8px_32px_-8px_rgba(168,85,247,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(168,85,247,0.8)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
       >
-        Potwierdź konto
+        Potwierdź i aktywuj konto PetlyAI app
       </button>
 
       <p className="text-sm opacity-70 max-w-md">
