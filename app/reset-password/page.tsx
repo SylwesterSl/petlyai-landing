@@ -1,14 +1,16 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
 import SubpageShell from "@/components/SubpageShell";
 import ResetPasswordClient from "@/components/ResetPasswordClient";
 
-export const revalidate = 60;
-
-export const metadata = {
+export const metadata: Metadata = {
   title: "Reset hasła — PetlyAI",
   description:
-    "Aby zresetować hasło w PetlyAI, otwórz aplikację mobilną. Zmiana hasła odbywa się wyłącznie w aplikacji.",
-  alternates: { canonical: "https://petlyai.pl/reset-password" },
-  robots: { index: false, follow: false },
+    "Aby ustawić nowe hasło, otwórz aplikację PetlyAI na swoim telefonie.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function ResetPasswordPage() {
@@ -17,7 +19,10 @@ export default function ResetPasswordPage() {
       title="Reset hasła"
       subtitle="Aby ustawić nowe hasło, otwórz aplikację PetlyAI na swoim telefonie."
     >
-      <ResetPasswordClient />
+      <Suspense fallback={null}>
+        <ResetPasswordClient />
+      </Suspense>
     </SubpageShell>
   );
 }
+
