@@ -1,74 +1,69 @@
 import { ReactNode } from "react";
-import SiteHeader from "@/components/Header";
-import SiteFooter from "@/components/Footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import { getImages, img } from "@/lib/cms";
 
-export const revalidate = 60;
-
-interface Props {
+type Props = {
   title: string;
   subtitle?: string;
   children: ReactNode;
   card?: boolean;
-}
+};
 
-export default async function SubpageShell({
-  title,
-  subtitle,
-  children,
-  card = true,
-}: Props) {
+export default async function SubpageShell({ title, subtitle, children, card = true }: Props) {
   const images = await getImages();
+  const galaxyBg = img(images, "galaxy_bg");
+  const stars = img(images, "stars_overlay");
 
   return (
-    <main className="relative min-h-screen overflow-hidden text-white">
-      {/* GALAXY BACKGROUND — identyczny jak na homepage */}
-      <div className="fixed inset-0 -z-10">
-        <img
-          src={img(images, "bg", "bg.jpg")}
-          alt=""
-          className="h-full w-full object-cover"
+    <main className="relative min-h-screen text-white overflow-hidden bg-[#0B0220]">
+      {/* Tła */}
+      {galaxyBg && (
+        <div
+          className="absolute inset-0 -z-20 bg-center bg-cover opacity-90"
+          style={{ backgroundImage: `url(${galaxyBg})` }}
         />
-        <img
-          src={img(images, "stars", "stars.png")}
-          alt=""
-          className="absolute inset-0 h-full w-full opacity-60"
+      )}
+      {stars && (
+        <div
+          className="absolute inset-0 -z-10 bg-repeat opacity-40 mix-blend-screen"
+          style={{ backgroundImage: `url(${stars})` }}
         />
-        <img
-          src={img(images, "gradient_glow", "gradient-glow.png")}
-          alt=""
-          className="absolute inset-0 h-full w-full opacity-70"
-        />
-      </div>
+      )}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-transparent via-purple-900/20 to-[#0B0220]" />
 
-      {/* HEADER — ten sam komponent co homepage (logo + menu + CTA) */}
-      <SiteHeader />
+      {/* Header z repo */}
+      <Header />
 
-      {/* HERO podstrony */}
-      <section className="relative z-10 mx-auto mt-8 max-w-5xl px-4 text-center md:mt-16 md:px-6 animate-fade-in">
-        <h1 className="bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-4xl font-bold leading-tight text-transparent drop-shadow-[0_0_30px_rgba(168,85,247,0.4)] md:text-6xl">
-          {title}
-        </h1>
-        {subtitle ? (
-          <p className="mx-auto mt-5 max-w-2xl text-base opacity-80 md:text-lg">
-            {subtitle}
-          </p>
-        ) : null}
+      {/* Hero */}
+      <section className="relative pt-12 md:pt-20 pb-8 md:pb-12 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">
+            {title}
+          </h1>
+          {subtitle && (
+            <p className="mt-4 md:mt-6 text-base md:text-xl text-white/80 max-w-2xl mx-auto">
+              {subtitle}
+            </p>
+          )}
+        </div>
       </section>
 
-      {/* CONTENT */}
-      <section className="relative z-10 mx-auto mb-20 mt-10 max-w-5xl px-4 md:mt-14 md:px-6">
-        {card ? (
-          <div className="rounded-2xl border border-white/10 bg-white/5 p-6 shadow-[0_8px_32px_-8px_rgba(168,85,247,0.3)] backdrop-blur-xl md:p-10">
-            {children}
-          </div>
-        ) : (
-          children
-        )}
+      {/* Content */}
+      <section className="relative px-4 pb-20 md:pb-32">
+        <div className="max-w-4xl mx-auto">
+          {card ? (
+            <div className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl shadow-[0_20px_80px_-20px_rgba(168,85,247,0.4)] p-6 md:p-12">
+              {children}
+            </div>
+          ) : (
+            children
+          )}
+        </div>
       </section>
 
-      {/* FOOTER — 1:1 jak homepage (logo, kolumny z CMS, piesek + kotek) */}
-      <SiteFooter />
+      {/* Footer z repo */}
+      <Footer />
     </main>
   );
 }
