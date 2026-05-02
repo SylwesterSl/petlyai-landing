@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
-import SiteHeader from "@/components/SiteHeader";
-import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/Header";
+import SiteFooter from "@/components/Footer";
 import { getImages, img } from "@/lib/cms";
 
 export const revalidate = 60;
