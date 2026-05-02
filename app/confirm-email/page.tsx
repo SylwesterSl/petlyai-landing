@@ -5,7 +5,7 @@ import ConfirmEmailClient from "@/components/ConfirmEmailClient";
 
 export const metadata: Metadata = {
   title: "Potwierdź email — PetlyAI",
-  description: "Aby aktywować konto w PetlyAI, otwórz aplikację na swoim telefonie.",
+  description: "Kliknij poniżej, aby aktywować konto w PetlyAI.",
   robots: { index: false, follow: false },
 };
 
