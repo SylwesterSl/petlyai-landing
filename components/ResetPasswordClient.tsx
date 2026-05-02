@@ -8,36 +8,28 @@ const GOOGLE_PLAY_URL = "#googleplay"; // TODO: podmień na finalny link Google 
 
 function detectPlatform(): "ios" | "android" | "desktop" {
   if (typeof navigator === "undefined") return "desktop";
-
-  const userAgent = navigator.userAgent || "";
-
-  if (/android/i.test(userAgent)) return "android";
-  if (/iphone|ipad|ipod/i.test(userAgent)) return "ios";
-
+  const ua = navigator.userAgent || "";
+  if (/android/i.test(ua)) return "android";
+  if (/iphone|ipad|ipod/i.test(ua)) return "ios";
   return "desktop";
 }
 
 export default function ResetPasswordClient() {
   const searchParams = useSearchParams();
-
-  const [platform, setPlatform] = useState<"ios" | "android" | "desktop">(
-    "desktop"
-  );
+  const [platform, setPlatform] = useState<"ios" | "android" | "desktop">("desktop");
   const [showFallback, setShowFallback] = useState(false);
 
   const deepLink = useMemo(() => {
     const token = searchParams.get("token") || searchParams.get("code") || "";
     const base = "petlyai://reset-password";
-
     return token ? `${base}?token=${encodeURIComponent(token)}` : base;
   }, [searchParams]);
 
   useEffect(() => {
-    const detectedPlatform = detectPlatform();
+    const p = detectPlatform();
+    setPlatform(p);
 
-    setPlatform(detectedPlatform);
-
-    if (detectedPlatform === "desktop") {
+    if (p === "desktop") {
       setShowFallback(true);
       return;
     }
@@ -45,13 +37,10 @@ export default function ResetPasswordClient() {
     const start = Date.now();
     let didHide = false;
 
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        didHide = true;
-      }
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") didHide = true;
     };
-
-    document.addEventListener("visibilitychange", handleVisibilityChange);
+    document.addEventListener("visibilitychange", onVisibility);
 
     window.location.href = deepLink;
 
@@ -63,60 +52,52 @@ export default function ResetPasswordClient() {
 
     return () => {
       window.clearTimeout(timer);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [deepLink]);
 
   const handleOpenApp = () => {
     window.location.href = deepLink;
-
-    window.setTimeout(() => {
-      setShowFallback(true);
-    }, 1500);
+    window.setTimeout(() => setShowFallback(true), 1500);
   };
 
   return (
-    <div className="flex flex-col items-center gap-8 text-center">
+    <div className="flex flex-col items-center text-center gap-8">
       <button
-        type="button"
         onClick={handleOpenApp}
-        className="inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 px-8 py-4 text-base font-semibold text-white shadow-[0_8px_32px_-8px_rgba(168,85,247,0.6)] transition-all duration-200 hover:scale-[1.02] hover:shadow-[0_12px_40px_-8px_rgba(168,85,247,0.8)] active:scale-[0.98] md:text-lg"
+        className="inline-flex items-center justify-center px-8 py-4 rounded-2xl text-base md:text-lg font-semibold text-white bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 shadow-[0_8px_32px_-8px_rgba(168,85,247,0.6)] hover:shadow-[0_12px_40px_-8px_rgba(168,85,247,0.8)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
       >
         Otwórz aplikację
       </button>
 
-      <p className="max-w-md text-sm opacity-70">
+      <p className="text-sm opacity-70 max-w-md">
         Jeśli aplikacja jest zainstalowana, otworzy się automatycznie.
       </p>
 
       {showFallback && (
-        <div className="mt-4 w-full max-w-md border-t border-white/10 pt-8">
-          <p className="mb-5 text-base font-medium md:text-lg">
+        <div className="mt-4 pt-8 border-t border-white/10 w-full max-w-md animate-fade-in">
+          <p className="text-base md:text-lg font-medium mb-5">
             Nie masz aplikacji? Pobierz ją:
           </p>
-
-          <div className="flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             {(platform === "ios" || platform === "desktop") && (
               <a
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-6 py-3 font-medium text-white backdrop-blur-md transition-all hover:bg-white/15"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 backdrop-blur-md text-white font-medium transition-all"
               >
-                <span aria-hidden="true">🍎</span>
-                App Store
+                <span>🍎</span> App Store
               </a>
             )}
-
             {(platform === "android" || platform === "desktop") && (
               <a
                 href={GOOGLE_PLAY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-6 py-3 font-medium text-white backdrop-blur-md transition-all hover:bg-white/15"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 border border-white/15 backdrop-blur-md text-white font-medium transition-all"
               >
-                <span aria-hidden="true">▶</span>
-                Google Play
+                <span>▶</span> Google Play
               </a>
             )}
           </div>
