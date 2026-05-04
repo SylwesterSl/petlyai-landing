@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { createClient } from "@supabase/supabase-js";
 import "./globals.css";
 import TrackerProvider from "../components/TrackerProvider";
+import LiveHeartbeat from "@/components/LiveHeartbeat";
 
 const SUPABASE_URL = "https://mslnptcmvciwyxwqjvmi.supabase.co";
 const SUPABASE_ANON_KEY =
@@ -72,9 +73,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pl">
       <body>
-        <TrackerProvider />
-        {children}
-      </body>
+  <TrackerProvider />
+  <LiveHeartbeat />
+  {children}
+</body>
+      
     </html>
   );
 }
